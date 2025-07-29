@@ -1,0 +1,1477 @@
+{
+    "uiInfo": {
+        "styleType": "displayNewRating"
+    },
+    "synckey": 1753672800,
+    "books": [
+        {
+            "bookInfo": {
+                "bookId": "3300024943",
+                "title": "一句顶一万句（2022新版）",
+                "author": "刘震云",
+                "cover": "https://cdn.weread.qq.com/weread/cover/43/3300024943/t6_3300024943.jpg",
+                "version": 1703608050,
+                "format": "epub",
+                "type": 0,
+                "price": 35,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "《一句顶一万句》是作家刘震云创作于2006年到2008年的长篇小说[1]，2011年8月获得第八届茅盾文学奖[2]。小说的主题是讲“一个人想找另一个人说句话不容易”。",
+                "centPrice": 3500,
+                "finished": 1,
+                "maxFreeChapter": 7,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 7,
+                    "maxFreeChapterUid": 48,
+                    "maxFreeChapterRatio": 79
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -1369172,
+                "publishTime": "2022-08-01 00:00:00",
+                "category": "精品小说-社会小说",
+                "categories": [
+                    {
+                        "categoryId": 100000,
+                        "subCategoryId": 100001,
+                        "categoryType": 0,
+                        "title": "精品小说-社会小说"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 29,
+                "paperBook": {
+                    "skuId": "13296065"
+                },
+                "copyrightChapterUids": [
+                    43
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 913,
+                "newRatingCount": 44365,
+                "newRatingDetail": {
+                    "good": 41295,
+                    "fair": 2418,
+                    "poor": 652,
+                    "recent": 1990,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 1,
+            "type": 0,
+            "readingCount": 13641
+        },
+        {
+            "bookInfo": {
+                "bookId": "34615967",
+                "title": "红楼梦（人民文学版）",
+                "author": "曹雪芹著 无名氏续 程伟元 高鹗整理",
+                "cover": "https://cdn.weread.qq.com/weread/cover/45/YueWen_34615967/t6_YueWen_34615967.jpg",
+                "version": 355995907,
+                "format": "epub",
+                "type": 0,
+                "price": 36,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "《红楼梦》，中国古代四大名著之一，也是中国古代小说的巅峰之作。全书以荣国府的日常生活为中心，以宝玉、黛玉、宝钗的爱情婚姻悲剧及大观园中点滴琐事为主线，以金陵贵族名门贾、史、王、薛四大家族由鼎盛走向衰亡的历史为暗线，展现了封建时代家族和社会的没落。",
+                "centPrice": 3600,
+                "finished": 1,
+                "maxFreeChapter": 19,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 19,
+                    "maxFreeChapterUid": 19,
+                    "maxFreeChapterRatio": 46
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -2571052,
+                "publishTime": "2019-10-17 00:00:00",
+                "category": "文学-古典文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300001,
+                        "categoryType": 0,
+                        "title": "文学-古典文学"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 136,
+                "paperBook": {
+                    "skuId": "12665740"
+                },
+                "copyrightChapterUids": [
+                    2
+                ],
+                "blockSaveImg": 0,
+                "language": "zh",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 932,
+                "newRatingCount": 12048,
+                "newRatingDetail": {
+                    "good": 11453,
+                    "fair": 302,
+                    "poor": 293,
+                    "recent": 257,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 2,
+            "type": 0,
+            "readingCount": 8185
+        },
+        {
+            "bookInfo": {
+                "bookId": "674044",
+                "title": "我与地坛",
+                "author": "史铁生",
+                "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/44/674044/t6_674044.jpg",
+                "version": 1447775167,
+                "format": "epub",
+                "type": 0,
+                "price": 9.99,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "要是有些事我没说，地坛，你别以为是我忘了，我什么也没忘；但是有些事只适合收藏，不能说，不能想，却又不能忘。《我与地坛》是史铁生文学作品中，充满哲思又极为人性化的代表作之一。其前两段被纳入人民教育出版社的高一教材中。前两部分注重讲地坛和他与母亲的后悔，对中学生来说，这是一篇令人反思的优秀文章。",
+                "centPrice": 999,
+                "finished": 1,
+                "maxFreeChapter": 3,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 3,
+                    "maxFreeChapterUid": 3,
+                    "maxFreeChapterRatio": 100
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -2571052,
+                "publishTime": "2011-04-01 00:00:00",
+                "category": "文学-散文杂著",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300005,
+                        "categoryType": 0,
+                        "title": "文学-散文杂著"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 14,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    2
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 915,
+                "newRatingCount": 73975,
+                "newRatingDetail": {
+                    "good": 69400,
+                    "fair": 4093,
+                    "poor": 482,
+                    "recent": 690,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 3,
+            "type": 0,
+            "readingCount": 6672
+        },
+        {
+            "bookInfo": {
+                "bookId": "26435427",
+                "title": "生死疲劳【中国诺奖得主代表作】",
+                "author": "莫言",
+                "cover": "https://cdn.weread.qq.com/weread/cover/79/yuewen_26435427/t6_yuewen_264354271701758059.jpg",
+                "version": 656827946,
+                "format": "epub",
+                "type": 0,
+                "price": 69.9,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "不看不知道，莫言真幽默！在极度痛苦时笑出声来，获得内心深处的解脱。\n不看不知道，欲哭又想笑。活着不容易，幽默无价宝。\n——莫言\n五十年间西门闹经历六次转世，\n一世为驴，二世为牛，三世为猪，四世为狗，五世为猴，最终降生为人。\n在这六世里，他目睹蓝脸一家三代经历人生的生死疲劳，\n他们爱就爱到底，恨就恨到底，犟就犟到底，干就干到底，\n有极致的痛苦与欢乐，更有不灭的热情与希望。\n而他们的故事，要从1950年1月1日讲起……",
+                "centPrice": 6990,
+                "finished": 1,
+                "maxFreeChapter": 15,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 15,
+                    "maxFreeChapterUid": 149,
+                    "maxFreeChapterRatio": 40
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 14792401,
+                "publishTime": "2022-01-01 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 70,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    206
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 914,
+                "newRatingCount": 50677,
+                "newRatingDetail": {
+                    "good": 47019,
+                    "fair": 2944,
+                    "poor": 714,
+                    "recent": 680,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 4,
+            "type": 0,
+            "readingCount": 5731
+        },
+        {
+            "bookInfo": {
+                "bookId": "24965201",
+                "title": "平凡的世界（全三册）",
+                "author": "路遥",
+                "cover": "https://cdn.weread.qq.com/weread/cover/61/yuewen_24965201/t6_yuewen_249652011682413401.jpg",
+                "version": 1105925723,
+                "format": "epub",
+                "type": 0,
+                "price": 89.99,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "茅盾文学奖皇冠上的明珠。激励亿万读者的不朽经典。深受老师和学生喜爱的新课标必读书。路遥获得了这个世界里数以亿计的普通人的尊敬和崇拜，他沟通了这个世界的人们和地球人类的情感。",
+                "centPrice": 8999,
+                "finished": 1,
+                "maxFreeChapter": 14,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 14,
+                    "maxFreeChapterUid": 349,
+                    "maxFreeChapterRatio": 26
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 1,
+                "cpid": 24367662,
+                "publishTime": "2017-05-31 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 175,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    343
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 930,
+                "newRatingCount": 126391,
+                "newRatingDetail": {
+                    "good": 118256,
+                    "fair": 6586,
+                    "poor": 1549,
+                    "recent": 632,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 5,
+            "type": 0,
+            "readingCount": 5204
+        },
+        {
+            "bookInfo": {
+                "bookId": "26713355",
+                "title": "你当像鸟飞往你的山",
+                "author": "[美]塔拉·韦斯特弗",
+                "translator": "任爱红",
+                "cover": "https://cdn.weread.qq.com/weread/cover/22/YueWen_26713355/t6_YueWen_26713355.jpg",
+                "version": 190618381,
+                "format": "epub",
+                "type": 0,
+                "price": 35.4,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "奇迹！一部新人处女作，上市第一周即登上《纽约时报》畅销榜，至今已累计80周，仍高居No.1，全美销量破百万册，作者被《时代周刊》评为“年度影响力人物”。17岁前从未上过学的女孩，如何成为剑桥大学博士？我们要背叛多少曾经，才能找到真正的自我！ 比尔·盖茨年度荐书 No.1",
+                "centPrice": 3540,
+                "finished": 1,
+                "maxFreeChapter": 6,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 6,
+                    "maxFreeChapterUid": 51,
+                    "maxFreeChapterRatio": 33
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 24367662,
+                "publishTime": "2019-11-01 00:00:00",
+                "category": "文学-散文杂著",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300005,
+                        "categoryType": 0,
+                        "title": "文学-散文杂著"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 49,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    95
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 871,
+                "newRatingCount": 104720,
+                "newRatingDetail": {
+                    "good": 92164,
+                    "fair": 11496,
+                    "poor": 1060,
+                    "recent": 889,
+                    "title": "好评如潮"
+                }
+            },
+            "searchIdx": 6,
+            "type": 0,
+            "readingCount": 4579
+        },
+        {
+            "bookInfo": {
+                "bookId": "935536",
+                "title": "百年孤独",
+                "author": "[哥]加西亚•马尔克斯",
+                "translator": "范晔",
+                "cover": "https://cdn.weread.qq.com/weread/cover/49/yuewen_935536/t6_yuewen_9355361682243599.jpg",
+                "version": 224494909,
+                "format": "epub",
+                "type": 0,
+                "price": 41.4,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "奈飞同名影视剧播出中。中国读者等待了近半个世纪的殿堂级经典《百年孤独》中文版惟一正式授权，根据马尔克斯指定版本翻译，未做任何增删！\n缔造文坛传奇与文学奇迹，影响世界小说走向的文学巨匠加西亚·马尔克斯巅峰杰作！代表“魔幻现实主义”文学主峰！征服全球读者、作家、出版社、版权经纪人、书店、媒体的鸿篇巨制！被誉为“《堂吉诃德》之后伟大的西班牙语作品”！",
+                "centPrice": 4140,
+                "finished": 1,
+                "maxFreeChapter": 5,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 5,
+                    "maxFreeChapterUid": 26,
+                    "maxFreeChapterRatio": 13
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 24367662,
+                "publishTime": "2024-12-01 00:00:00",
+                "category": "文学-外国文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300013,
+                        "categoryType": 0,
+                        "title": "文学-外国文学"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 23,
+                "paperBook": {
+                    "skuId": "13080437"
+                },
+                "copyrightChapterUids": [
+                    23
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 891,
+                "newRatingCount": 75331,
+                "newRatingDetail": {
+                    "good": 67790,
+                    "fair": 6729,
+                    "poor": 812,
+                    "recent": 726,
+                    "title": "好评如潮"
+                }
+            },
+            "searchIdx": 7,
+            "type": 0,
+            "readingCount": 4519
+        },
+        {
+            "bookInfo": {
+                "bookId": "855327",
+                "title": "悉达多（果麦经典）",
+                "author": "赫尔曼·黑塞",
+                "translator": "姜乙",
+                "cover": "https://cdn.weread.qq.com/weread/cover/68/YueWen_855327/t6_YueWen_855327.jpg",
+                "version": 565766297,
+                "format": "epub",
+                "type": 0,
+                "price": 32,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "    青年悉达多厌倦了婆罗门生活，与好友侨文达一道跟随沙门修行。在舍卫城他们聆听了佛陀乔达摩的教义，侨文达选择追随乔达摩，悉达多则继续修行之路。他在城市中结识名妓迦摩罗，并开始追逐情欲和名利，直至对一切产生厌倦。他再次抛下世俗，决心结束自己的生命。在河边，在绝望的瞬间，他听到河水的声音……\n",
+                "centPrice": 3200,
+                "finished": 1,
+                "maxFreeChapter": 7,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 7,
+                    "maxFreeChapterUid": 23,
+                    "maxFreeChapterRatio": 23
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -3319053,
+                "publishTime": "2017-01-01 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 20,
+                "paperBook": {
+                    "skuId": "12135684"
+                },
+                "copyrightChapterUids": [
+                    18
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 905,
+                "newRatingCount": 65625,
+                "newRatingDetail": {
+                    "good": 60661,
+                    "fair": 4231,
+                    "poor": 733,
+                    "recent": 1175,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 8,
+            "type": 0,
+            "readingCount": 4435
+        },
+        {
+            "bookInfo": {
+                "bookId": "853107",
+                "title": "基督山伯爵",
+                "author": "[法]大仲马",
+                "translator": "周克希",
+                "cover": "https://wfqqreader-1252317822.image.myqcloud.com/cover/107/853107/t6_853107.jpg",
+                "version": 302518387,
+                "format": "epub",
+                "type": 0,
+                "price": 39.99,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "世界通俗小说中的扛鼎之作，一百多年来始终畅销不衰，发行数以亿册，多次被搬上银幕。本书主要描写的是法国波旁王朝时期发生的一个报恩复仇的故事。法老号船的年轻大副唐戴斯受船长临终之托为拿破仑党人送一封信，遭两个卑鄙小人和阴险检察官维尔福的陷害，被关入死牢。剥夺了本该属于他的美好阳光、爱情和前程。十八年后，他带着狱友法里亚教士临死前告诉他的秘密，越狱逃生，找到法里亚藏匿的宝藏后成为巨富，从此他化名基督山伯爵。经过精心策划，他报答了恩人，惩罚了三个想置他于死地的仇人，并向恩人报了恩。",
+                "centPrice": 3999,
+                "finished": 1,
+                "maxFreeChapter": 19,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 19,
+                    "maxFreeChapterUid": 138,
+                    "maxFreeChapterRatio": 25
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 13583905,
+                "publishTime": "2013-08-01 00:00:00",
+                "category": "文学-外国文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300013,
+                        "categoryType": 0,
+                        "title": "文学-外国文学"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300014,
+                        "categoryType": 0,
+                        "title": "文学-世界名著"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 122,
+                "paperBook": {
+                    "skuId": "12501230"
+                },
+                "copyrightChapterUids": [
+                    121
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 929,
+                "newRatingCount": 31504,
+                "newRatingDetail": {
+                    "good": 29668,
+                    "fair": 1642,
+                    "poor": 194,
+                    "recent": 443,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 9,
+            "type": 0,
+            "readingCount": 4308
+        },
+        {
+            "bookInfo": {
+                "bookId": "34631845",
+                "title": "西游记（人民文学版）",
+                "author": "[明]吴承恩",
+                "cover": "https://cdn.weread.qq.com/weread/cover/22/yuewen_34631845/t6_yuewen_346318451676961764.jpg",
+                "version": 1335302702,
+                "format": "epub",
+                "type": 0,
+                "price": 29,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "此次出版大字本，底本拟采用发行量最大的“中国古典文学读本丛书”四大名著，其中《三国演义》《西游记》经过全面修订，更臻完善。",
+                "centPrice": 2900,
+                "finished": 1,
+                "maxFreeChapter": 15,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 15,
+                    "maxFreeChapterUid": 228,
+                    "maxFreeChapterRatio": 52
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -2571052,
+                "publishTime": "2019-09-11 00:00:00",
+                "category": "文学-古典文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300001,
+                        "categoryType": 0,
+                        "title": "文学-古典文学"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 108,
+                "paperBook": {
+                    "skuId": "10008248"
+                },
+                "copyrightChapterUids": [
+                    215
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 924,
+                "newRatingCount": 10493,
+                "newRatingDetail": {
+                    "good": 9969,
+                    "fair": 293,
+                    "poor": 231,
+                    "recent": 163,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 10,
+            "type": 0,
+            "readingCount": 4262
+        },
+        {
+            "bookInfo": {
+                "bookId": "853116",
+                "title": "杀死一只知更鸟（同名电影原著）",
+                "author": "哈珀·李",
+                "translator": "李育超",
+                "cover": "https://cdn.weread.qq.com/weread/cover/32/YueWen_853116/t6_YueWen_853116.jpg",
+                "version": 357947648,
+                "format": "epub",
+                "type": 0,
+                "price": 55.99,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "《杀死一只知更鸟》的故事发生在大萧条时期美国南方一个静谧的小镇，几桩离奇的疑案彻底打破了几个孩子平静的生活：事件的真凶，怪人的谜底，传言背后的真相……在父亲的指引下，他们在迷雾中寻找真知，在磨难中历练风度，在不公平中积累正气，经历了暴风骤雨般的成长，也感受了人间的温暖与真情。",
+                "centPrice": 5599,
+                "finished": 1,
+                "maxFreeChapter": 7,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 7,
+                    "maxFreeChapterUid": 40,
+                    "maxFreeChapterRatio": 78
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 13583905,
+                "publishTime": "2017-02-01 00:00:00",
+                "category": "精品小说-影视原著",
+                "categories": [
+                    {
+                        "categoryId": 100000,
+                        "subCategoryId": 100012,
+                        "categoryType": 0,
+                        "title": "精品小说-影视原著"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300014,
+                        "categoryType": 0,
+                        "title": "文学-世界名著"
+                    }
+                ],
+                "hasLecture": 0,
+                "lPushName": "愿你克服偏见 愿你一往无前",
+                "lastChapterIdx": 36,
+                "paperBook": {
+                    "skuId": "12037351"
+                },
+                "copyrightChapterUids": [
+                    35
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 920,
+                "newRatingCount": 107248,
+                "newRatingDetail": {
+                    "good": 99906,
+                    "fair": 6648,
+                    "poor": 694,
+                    "recent": 755,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 11,
+            "type": 0,
+            "readingCount": 3826
+        },
+        {
+            "bookInfo": {
+                "bookId": "3300010685",
+                "title": "一地鸡毛（典藏版）",
+                "author": "刘震云",
+                "cover": "https://cdn.weread.qq.com/weread/cover/85/3300010685/t6_3300010685.jpg",
+                "version": 1226538711,
+                "format": "epub",
+                "type": 0,
+                "price": 45,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "《一地鸡毛》被称为新写实主义的代表作，获得多种文学奖，描写了主人公小林在单位在家庭的种种遭遇和心灵轨迹的演变。菜篮子、妻子、孩子、豆腐、保姆、单位中的恩恩怨怨和是是非非。从而反映了大多数中国人在八九十年代的日常生活和生存状态。它真实而生动地反映了大多数中国人生活的主旋律，深刻反映了改革开放的新形势给人们内心和外在的变化。本书以生动的细节和人物形象取胜，是一部精彩作品。  《一地鸡毛》在 出版时就引起轰动，被称为新写实主义的代表作，获得多种文学奖。其中很多篇目是琐碎人生的范本和关系学的教科书。菜篮子、妻子、孩子、保姆、单位……当中的恩恩怨怨和是是非非将官场和家庭的鸡毛蒜皮纤毫毕现，不嫌其俗，不掩其恶，人心之险展示无遗。",
+                "centPrice": 4500,
+                "finished": 1,
+                "maxFreeChapter": 4,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 4,
+                    "maxFreeChapterUid": 23,
+                    "maxFreeChapterRatio": 11
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 16558172,
+                "publishTime": "2016-08-01 00:00:00",
+                "category": "精品小说-社会小说",
+                "categories": [
+                    {
+                        "categoryId": 100000,
+                        "subCategoryId": 100001,
+                        "categoryType": 0,
+                        "title": "精品小说-社会小说"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 0,
+                "lastChapterIdx": 11,
+                "paperBook": {
+                    "skuId": "11089589"
+                },
+                "copyrightChapterUids": [
+                    12
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 915,
+                "newRatingCount": 26910,
+                "newRatingDetail": {
+                    "good": 25012,
+                    "fair": 1566,
+                    "poor": 332,
+                    "recent": 508,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 12,
+            "type": 0,
+            "readingCount": 3787
+        },
+        {
+            "bookInfo": {
+                "bookId": "3300148779",
+                "title": "克林索尔的最后夏天",
+                "author": "[德]赫尔曼·黑塞",
+                "translator": "张佩芬 王奕鑫",
+                "cover": "https://cdn.weread.qq.com/weread/cover/39/cpplatform_8metxh4jat4emxjdwqnpaz/t6_cpplatform_8metxh4jat4emxjdwqnpaz1750061000.jpg",
+                "version": 1643522763,
+                "format": "epub",
+                "type": 0,
+                "price": 29,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "这是一场在炽烈夏日里绽放的生命狂欢！\n德国文学巨匠黑塞用魔幻笔触勾勒出画家克林索尔生命中最后的燃烧岁月。\n当死亡阴影悄然逼近，这位艺术家在意大利艳阳下狂饮作画，用镉黄与朱红涂抹出超越生死的绚烂。\n黑塞将东方哲思注入欧洲灵魂，邀你共赴这场色彩、美酒与诗歌交织的哲思盛宴。\n在酩酊的星空下，见证一个天才如何用调色板对抗虚无，在盛夏光年里完成对生命最壮美的谢幕。\n本书精心收录黑塞四部深邃短篇与一部诗歌散文集，内容丰度远超常规版本。\n文前6页精美插画，并独家复刻黑塞本人创作的原版手绘插图，带领你步入作家亲手描绘的斑斓心灵秘境，全方位沉浸于黑塞的艺术世界，开启夏日灵魂之旅！",
+                "centPrice": 2900,
+                "finished": 1,
+                "maxFreeChapter": 4,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 4,
+                    "maxFreeChapterUid": 4,
+                    "maxFreeChapterRatio": 54
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 1000000190,
+                "publishTime": "2025-06-19 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 0,
+                "lastChapterIdx": 31,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    2
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 826,
+                "newRatingCount": 1179,
+                "newRatingDetail": {
+                    "good": 957,
+                    "fair": 167,
+                    "poor": 55,
+                    "recent": 1072,
+                    "title": "脍炙人口"
+                }
+            },
+            "searchIdx": 13,
+            "type": 0,
+            "readingCount": 3730
+        },
+        {
+            "bookInfo": {
+                "bookId": "3300152505",
+                "title": "你也只活了一次，凭什么说我选择的人生是错的？",
+                "author": "猴面包的树",
+                "cover": "https://cdn.weread.qq.com/weread/cover/61/cpplatform_cfrpyqhxfq3tm4yoqeay3k/t6_cpplatform_cfrpyqhxfq3tm4yoqeay3k1752139227.jpg",
+                "version": 1087329439,
+                "format": "epub",
+                "type": 0,
+                "price": 27,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "非洲大地的褶皱里，蛰伏着文明与野性的博弈——维多利亚瀑布的水雾中，既有殖民时代的残响，也有当代生存的困局。当旅人捡起津巴布韦500亿面值的纸币，以为触摸到财富密码，却撞见比数字更荒诞的现实：部落长老腹中的灵石守护着传统，而城市街头的枪声击穿了现代神话。在这片土地上，每个脚印都在丈量：究竟是谁在凝视谁的命运？",
+                "centPrice": 2700,
+                "finished": 1,
+                "maxFreeChapter": 4,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 4,
+                    "maxFreeChapterUid": 4,
+                    "maxFreeChapterRatio": 100
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 7,
+                "cpid": 1000000190,
+                "publishTime": "2025-07-14 00:00:00",
+                "category": "文学-纪实文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300002,
+                        "categoryType": 0,
+                        "title": "文学-纪实文学"
+                    }
+                ],
+                "authorVids": "919584911",
+                "hasLecture": 0,
+                "lastChapterIdx": 16,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    2
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 918,
+                "newRatingCount": 180,
+                "newRatingDetail": {
+                    "good": 167,
+                    "fair": 6,
+                    "poor": 7,
+                    "recent": 180,
+                    "title": "神作潜力"
+                }
+            },
+            "searchIdx": 14,
+            "type": 0,
+            "readingCount": 3472
+        },
+        {
+            "bookInfo": {
+                "bookId": "26447797",
+                "title": "丰乳肥臀【中国诺奖得主代表作】",
+                "author": "莫言",
+                "cover": "https://cdn.weread.qq.com/weread/cover/82/yuewen_26447797/t6_yuewen_264477971701748559.jpg",
+                "version": 1273947050,
+                "format": "epub",
+                "type": 0,
+                "price": 69.9,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "莫言曾坦言：“你可以不看我所有的作品，但你如果要了解我，应该看我的《丰乳肥臀》。”\n本书是莫言1995年创作的一部波澜壮阔的“史诗性”长篇小说。作者以母亲的一生为缩影，还原了近代中国一个世纪的起伏变迁，多层次地描写了母亲与她生养的众多子女的命运。\n文中的母亲饱经苦难，她含辛茹苦地抚育着九个子女和女儿们的子女，在战乱中用生命保护孩子们避难、逃荒。她的女儿们一个个长大，跟着她们爱上的男人加入不同的政治势力，不可抗拒地被卷入政治历史舞台。在这个大家庭内部投射出各种力量之间的角逐与厮杀、牺牲与冷漠、荣耀与耻辱。大起大落后，母亲始终如坚硬的河床承受着一切，保护着一切。她见证了战争与饥饿，也见证了荒唐与耻辱。\n莫言以超乎常人的想象力和魔幻现实主义的笔法，将一个家族的受难史、一个国家的变迁史、一个民族的苦难史记录下来，苦难之极，荒诞之极，魔幻之极。\n在这里，爱与欲、生与死、鲜血与肉体、饥渴与奢侈，都以魔幻现实主义的方式爆发出来……",
+                "centPrice": 6990,
+                "finished": 1,
+                "maxFreeChapter": 18,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 18,
+                    "maxFreeChapterUid": 178,
+                    "maxFreeChapterRatio": 27
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 14792401,
+                "publishTime": "2017-01-02 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 0,
+                "lPushName": "诺奖得主莫言经典代表作",
+                "lastChapterIdx": 83,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    244
+                ],
+                "blockSaveImg": 0,
+                "language": "zh",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 849,
+                "newRatingCount": 34842,
+                "newRatingDetail": {
+                    "good": 29691,
+                    "fair": 4026,
+                    "poor": 1125,
+                    "recent": 222,
+                    "title": "脍炙人口"
+                }
+            },
+            "searchIdx": 15,
+            "type": 0,
+            "readingCount": 3458
+        },
+        {
+            "bookInfo": {
+                "bookId": "31808219",
+                "title": "卡拉马佐夫兄弟（套装上下册）（陀思妥耶夫斯基文集2015）",
+                "author": "陀思妥耶夫斯基",
+                "translator": "荣如德",
+                "cover": "https://cdn.weread.qq.com/weread/cover/28/YueWen_31808219/t6_YueWen_31808219.jpg",
+                "version": 1879473929,
+                "format": "epub",
+                "type": 0,
+                "price": 97.99,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "本书系俄国大作家陀思妥耶夫斯基代表作之一。小说通过一桩真实的弑父案，描写老卡拉马佐夫同三个儿子即两代人之间的尖锐冲突。老卡拉马佐夫贪婪好色，独占妻子留给儿子们的遗产，并与长子德米特里为一个风流女子争风吃醋。一天黑夜，德米特里疑心自己的情人去跟老头儿幽会，便闯入家园，一怒之下，差点儿把老头儿砸死。他仓皇逃离后，躲在暗中装病的老卡拉马佐夫的私生子斯乜尔加科夫，悄然杀死老爷，造成了一桩震惊全俄的扑朔迷离的血案，从而引发了一连串惊心动魄的事件。作品展示一个错综复杂的社会家庭、道德和人性的悲剧主题，体现了作家一生的最高艺术成就。",
+                "centPrice": 9799,
+                "finished": 1,
+                "maxFreeChapter": 8,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 8,
+                    "maxFreeChapterUid": 144,
+                    "maxFreeChapterRatio": 19
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 9030183,
+                "publishTime": "2014-12-01 00:00:00",
+                "category": "文学-外国文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300013,
+                        "categoryType": 0,
+                        "title": "文学-外国文学"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300014,
+                        "categoryType": 0,
+                        "title": "文学-世界名著"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 26,
+                "paperBook": {
+                    "skuId": "12868206"
+                },
+                "copyrightChapterUids": [
+                    141
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 939,
+                "newRatingCount": 9161,
+                "newRatingDetail": {
+                    "good": 8849,
+                    "fair": 245,
+                    "poor": 67,
+                    "recent": 258,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 16,
+            "type": 0,
+            "readingCount": 3227
+        },
+        {
+            "bookInfo": {
+                "bookId": "812443",
+                "title": "白鹿原",
+                "author": "陈忠实",
+                "cover": "https://cdn.weread.qq.com/weread/cover/78/YueWen_812443/t6_YueWen_812443.jpg",
+                "version": 168841035,
+                "format": "epub",
+                "type": 0,
+                "price": 12,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "同名电视剧由张嘉译、何冰、秦海璐、刘佩琪等人主演。当代文学里程碑之作，茅盾文学奖获奖作品。一部记录“民族的秘史”的长卷，一部渭河平原50年变迁的雄奇史诗，一轴中国农村斑斓多彩，触目惊心的长幅画卷。主人公白嘉轩六娶六丧，神秘的序曲预示着不祥。一个家族两代子孙，为争夺白鹿原的统治代代争斗不已，上演了一幕幕惊心动魄的活剧：巧取风水地，恶施美人计，孝子为匪，亲翁杀媳，兄弟相煎，情人反目……大革命、日寇入侵、三年内战，白鹿原翻云覆雨，王旗变幻，家仇国恨交错缠结，冤冤相报代代不已。",
+                "centPrice": 1200,
+                "finished": 1,
+                "maxFreeChapter": 10,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 10,
+                    "maxFreeChapterUid": 55,
+                    "maxFreeChapterRatio": 81
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -2571052,
+                "publishTime": "1993-06-01 00:00:00",
+                "category": "文学-经典作品",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300004,
+                        "categoryType": 0,
+                        "title": "文学-经典作品"
+                    }
+                ],
+                "hasLecture": 1,
+                "lPushName": "《白鹿原》原著 茅奖获奖佳作",
+                "lastChapterIdx": 40,
+                "paperBook": {
+                    "skuId": "12128057"
+                },
+                "copyrightChapterUids": [
+                    47
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 911,
+                "newRatingCount": 111549,
+                "newRatingDetail": {
+                    "good": 102125,
+                    "fair": 8689,
+                    "poor": 735,
+                    "recent": 282,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 17,
+            "type": 0,
+            "readingCount": 2937
+        },
+        {
+            "bookInfo": {
+                "bookId": "3300020163",
+                "title": "我的阿勒泰（马伊琍、周依然、于适主演同名电视剧原著）",
+                "author": "李娟",
+                "cover": "https://cdn.weread.qq.com/weread/cover/31/cpplatform_fy7wyg2acrhxq1vu4yvs9y/t6_cpplatform_fy7wyg2acrhxq1vu4yvs9y1714307419.jpg",
+                "version": 396072845,
+                "format": "epub",
+                "type": 0,
+                "price": 22.5,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 2,
+                "payType": 1048577,
+                "intro": "偏远寂静的阿克哈拉村，缓慢而永恒的喀吾图，沙依横布拉克的夏牧场……“阿勒泰的精灵”李娟以细腻明亮的笔触全景式记录北疆边地美好闪光的时刻。全书分为两辑。第一辑记忆之中（2007-2009），记录了在喀吾图和阿克哈拉村细碎坚忍的生活画面；第二辑角落之中（2002-2006），原生态书写了李娟和母亲及高龄的外婆随牧民迁徙、流动的日常：开杂货铺，当小裁缝，帮往来的牧民车衣裙，去大山深处采野生木耳；春天沙依恒布拉克草原上鼓胀的帐篷，夏季牧场上喧嚣盛大的阿肯弹唱会，入冬后瓷实的迢迢雪路……戈壁、草原、森林、雪山、骏马和牧人，细腻明亮的文字展现了游牧民族在边地深远丰富的生存景观。",
+                "centPrice": 2250,
+                "finished": 1,
+                "maxFreeChapter": 11,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 11,
+                    "maxFreeChapterUid": 40,
+                    "maxFreeChapterRatio": 20
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 3343067,
+                "publishTime": "2021-08-01 00:00:00",
+                "category": "精品小说-影视原著",
+                "categories": [
+                    {
+                        "categoryId": 100000,
+                        "subCategoryId": 100012,
+                        "categoryType": 0,
+                        "title": "精品小说-影视原著"
+                    },
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300005,
+                        "categoryType": 0,
+                        "title": "文学-散文杂著"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 32,
+                "paperBook": {
+                    "skuId": "12932325"
+                },
+                "copyrightChapterUids": [
+                    31
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-CN",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 890,
+                "newRatingCount": 32064,
+                "newRatingDetail": {
+                    "good": 29034,
+                    "fair": 2565,
+                    "poor": 465,
+                    "recent": 432,
+                    "title": "好评如潮"
+                }
+            },
+            "searchIdx": 18,
+            "type": 0,
+            "readingCount": 2902
+        },
+        {
+            "bookInfo": {
+                "bookId": "3300104586",
+                "title": "在峡江的转弯处：陈行甲人生笔记",
+                "author": "陈行甲",
+                "cover": "https://cdn.weread.qq.com/weread/cover/81/cpplatform_8al4mxpuzvvbhtnckcc7gc/t6_cpplatform_8al4mxpuzvvbhtnckcc7gc1720420733.jpg",
+                "version": 171985778,
+                "format": "epub",
+                "type": 0,
+                "price": 60,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "《在峡江的转弯处：陈行甲人生笔记》是陈行甲的自传体随笔，从童年岁月写起，写母亲，写爱人；写了从大学毕业到基层工作九年多的生活经历；回顾了作者在巴东任县委书记期间的工作和生活；讲述了作者转场公益几年来的经历和感受。从本书中，作者用鲜活的故事和大量的细节讲述了一个普通人的爱与成长，以及如何在世事变幻中守住内心和实践的知行合一。",
+                "centPrice": 6000,
+                "finished": 1,
+                "maxFreeChapter": 7,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 7,
+                    "maxFreeChapterUid": 21,
+                    "maxFreeChapterRatio": 49
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": 1000000190,
+                "publishTime": "2024-07-08 00:00:00",
+                "category": "文学-散文杂著",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300005,
+                        "categoryType": 0,
+                        "title": "文学-散文杂著"
+                    }
+                ],
+                "hasLecture": 0,
+                "lastChapterIdx": 16,
+                "paperBook": {
+                    "skuId": ""
+                },
+                "copyrightChapterUids": [
+                    16
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 931,
+                "newRatingCount": 24508,
+                "newRatingDetail": {
+                    "good": 23682,
+                    "fair": 682,
+                    "poor": 144,
+                    "recent": 1676,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 19,
+            "type": 0,
+            "readingCount": 2848
+        },
+        {
+            "bookInfo": {
+                "bookId": "29855984",
+                "title": "三国演义（人民文学版）",
+                "author": "[明]罗贯中",
+                "cover": "https://cdn.weread.qq.com/weread/cover/20/yuewen_29855984/t6_yuewen_298559841676969263.jpg",
+                "version": 2102687759,
+                "format": "epub",
+                "type": 0,
+                "price": 39.5,
+                "originalPrice": 0,
+                "soldout": 0,
+                "bookStatus": 1,
+                "payingStatus": 1,
+                "payType": 4097,
+                "intro": "古典小说《三国演义》从汉灵帝黄巾起义写起，到西晋三国统一为止，描写了九十余年的重大历史事件及历史人物的活动，展示了三国兴亡的历史画卷，形象地再现了这一风云变幻的历史时代，生动地揭示了统治集团内部尔虞我诈、争权夺利的关系。 由人民文学出版社出版的《三国演义》是以毛宗岗本为底本、经过多次整理校订而成的迄今国内发行量最大、最权威的版本，自面世以来，一直是市场上最受读者欢迎古典文学名著之一。",
+                "centPrice": 3950,
+                "finished": 1,
+                "maxFreeChapter": 16,
+                "maxFreeInfo": {
+                    "maxFreeChapterIdx": 16,
+                    "maxFreeChapterUid": 143,
+                    "maxFreeChapterRatio": 30
+                },
+                "free": 0,
+                "mcardDiscount": 0,
+                "ispub": 1,
+                "extra_type": 5,
+                "cpid": -2571052,
+                "publishTime": "2019-07-17 00:00:00",
+                "category": "文学-古典文学",
+                "categories": [
+                    {
+                        "categoryId": 300000,
+                        "subCategoryId": 300001,
+                        "categoryType": 0,
+                        "title": "文学-古典文学"
+                    }
+                ],
+                "hasLecture": 1,
+                "lastChapterIdx": 128,
+                "paperBook": {
+                    "skuId": "10120120"
+                },
+                "copyrightChapterUids": [
+                    129
+                ],
+                "blockSaveImg": 0,
+                "language": "zh-wr",
+                "isTraditionalChinese": false,
+                "hideUpdateTime": false,
+                "isEPUBComics": 0,
+                "isVerticalLayout": 0,
+                "isShowTTS": 1,
+                "webBookControl": 0,
+                "selfProduceIncentive": false,
+                "isAutoDownload": 1,
+                "newRating": 908,
+                "newRatingCount": 4503,
+                "newRatingDetail": {
+                    "good": 4187,
+                    "fair": 179,
+                    "poor": 137,
+                    "recent": 101,
+                    "title": "神作"
+                }
+            },
+            "searchIdx": 20,
+            "type": 0,
+            "readingCount": 2839
+        }
+    ],
+    "hasMore": 1,
+    "totalCount": 44458
+}
