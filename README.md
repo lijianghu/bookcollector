@@ -1,6 +1,6 @@
 # 图书收集器 (Book Collector)
 
-一个用于从微信读书API获取图书信息并存储到MySQL数据库的Python工具。
+一个用于从微信读书API获取图书信息并存储到MySQL数据库的Python工具
 
 ## 功能特性
 
