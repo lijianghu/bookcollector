@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.3.12.RELEASE</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.bookcollector</groupId>
+  <artifactId>bookcollector-admin</artifactId>
+  <version>1.0.0</version>
+  <name>bookcollector-admin</name>
+  <description>微信读书图书采集后台（第一期）</description>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <fastjson2.version>2.0.60</fastjson2.version>
+    <springdoc.version>1.6.15</springdoc.version>
+
+    <!--
+      若 MongoDB 驱动 4.0.6 连不上服务端 7.0.30，把下面这行的注释去掉。
+      （官方兼容表：4.10+ 才是「✓ 完全兼容」；4.0.6 是「⊛ 部分兼容 = 能用」）
+      <mongodb.version>4.11.1</mongodb.version>
+    -->
+  </properties>
+
+  <dependencies>
+
+    <!-- ===== Web ===== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- ===== 数据 ===== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!--
+      ===== HTTP 客户端 =====
+      ⚠️ 必须是 Apache HttpClient 4.5.x。
+      Spring Framework 5.2（Spring Boot 2.3）的
+      HttpComponentsClientHttpRequestFactory 不接受 HttpClient 5.x。
+      版本由 spring-boot-starter-parent 管理（2.3.12 → 4.5.13）。
+      spring-boot-starter-web 不自带 httpclient，所以必须显式声明。
+    -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+
+    <!-- ===== JSON ===== -->
+    <dependency>
+      <groupId>com.alibaba.fastjson2</groupId>
+      <artifactId>fastjson2</artifactId>
+      <version>${fastjson2.version}</version>
+    </dependency>
+
+    <!-- ===== 接口文档（Spring Boot 2.x 只能用 springdoc 1.6.x）===== -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+
+    <!--
+      ===== 工具 =====
+      不引 Guava：只为限速一个功能背 3MB 依赖不划算，
+      自己写一个 10 行的 SimpleRateLimiter 就够（见 collector/SimpleRateLimiter.java）。
+      注意：Spring Boot 2.3 的 BOM 不管理 Guava，真要引必须自己写版本号。
+    -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- ===== 测试 ===== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>bookcollector-admin</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <!--
+            spring-boot:run 会 fork 一个新的 JVM，MAVEN_OPTS 传不进去，
+            所以这里显式给应用 JVM 设 file.encoding。
+            本机 Maven/JVM 默认编码是 GBK，不设的话中文日志会乱码。
+          -->
+          <!--
+            🔴 -DLOG_DIR 必须是**绝对路径**，不能图省事写 "logs" 或 "../logs"。
+
+            原因：spring-boot:run fork 出来的 JVM，**工作目录是 ${project.basedir}**
+            （也就是 backend/），跟你在哪个目录调 Maven 完全无关。
+            于是 logback 里的相对路径 `logs/` 会落在 `backend/logs/`，
+            而不是约定的 `<项目根>/logs/` —— 日志「莫名消失」，很难查。
+
+            ${project.basedir} 由 Maven 解析成绝对路径，所以这里注入的是绝对路径，
+            无论从哪儿启动、fork 出什么工作目录，日志都稳定落在 <项目根>/logs/。
+
+            注意：这是**插件参数**，只对 `spring-boot:run` 生效。
+            将来 `java -jar` 直接跑时没有这个属性，logback 会退回默认值 `logs`
+            （即相对于当时的 CWD），那时请用 -DLOG_DIR=... 显式指定。
+          -->
+          <jvmArguments>-Dfile.encoding=UTF-8 -DLOG_DIR=${project.basedir}/../logs</jvmArguments>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,365 +1,559 @@
-# 图书收集器 (Book Collector)
+# 微信读书采集后台 · bookcollector-admin
 
-一个用于从微信读书API获取图书信息并存储到MySQL数据库的Python工具
+把「微信读书分类 / 榜单图书采集」做成一个**可视化后台**的单机应用。
+
+后端 Spring Boot + MongoDB，前端 Vue 3 + Element Plus。可以按分类或榜单建立采集任务、
+随时启动 / 暂停 / 恢复 / 取消、查看采集进度与运行日志、浏览与检索采集到的图书，
+并对每一次上游接口调用留下审计记录。
+
+> **第一期范围**
+> 做：分类 / 榜单管理 → 启动采集任务 → 看进度 → 浏览采集到的图书。
+> 不做：SSE 实时推送（手动刷新）、定时采集、权限体系（写死登录）、ETL 迁移、
+> 数据导出、模糊搜索、Docker 部署。
+
+---
+
+## 目录
+
+- [功能特性](#功能特性)
+- [技术栈](#技术栈)
+- [系统架构](#系统架构)
+- [数据模型](#数据模型)
+- [目录结构](#目录结构)
+- [快速开始](#快速开始)
+- [接口约定](#接口约定)
+- [设计约定](#设计约定)
+- [测试](#测试)
+- [常见问题](#常见问题)
+
+---
 
 ## 功能特性
 
-- 🔍 从微信读书API获取图书信息
-- 💾 将图书数据存储到MySQL数据库
-- 📊 支持多种分类的图书收集
-- 📈 提供数据库统计和查询功能
-- 🔄 支持增量更新和重复数据处理
-- 📝 详细的日志记录
+### 仪表盘
 
-## 项目结构
+- 4 个指标卡：图书总数、分类数、任务数、今日新增
+- 4 张 ECharts 图表：评分分布、年份分布、分类分布、采集趋势
+- 指标卡与图表**分两个接口**返回，让数字先出、图表后到，避免整页等最慢的那个
+
+### 图书库
+
+- 12 个查询参数：书名、作者、分类、评分区间、年份区间、排序方式等
+- 服务端分页与排序（排序字段走白名单，不开放任意字段）
+- 列显隐配置，偏好落 `localStorage`，刷新后保持
+- 详情抽屉：60 个字段分 5 组展示
+- 编辑：**只提交被改过的字段**，不会用整本覆盖（避免把并发写入的字段冲掉）
+- 批量删除，返回实际删除条数
+
+### 任务中心
+
+- 任务增删改查；一个采集目标（分类 / 榜单）**同时只能有一个任务**
+- 7 状态机：`PENDING` / `RUNNING` / `PAUSED` / `SUCCESS` / `FAILED` / `CANCELED` / `INTERRUPTED`
+- 动作：启动 / 暂停 / 恢复 / 取消 / 重试 / 编辑 / 删除
+- 状态机在前端有一份镜像（按钮可用性、标签文案、颜色），与后端逐条对齐
+- 详情抽屉 3 个 Tab：概览、运行历史、运行日志，支持手动刷新
+- 运行历史保留最近 50 次，日志保留最近 500 条
+- 应用重启时自动把遗留的 `RUNNING` / `PAUSED` 任务标记为 `INTERRUPTED`（清理假死状态）
+
+### 分类榜单（采集目标字典）
+
+- 分类与榜单的增删改查、启用 / 停用
+- 删除时有任务引用则拒绝；只有游标引用时顺带清理游标
+- 首次启动自动 seed 21 个分类 + 7 个榜单（只补缺失，不覆盖已有修改）
+
+### 采集游标
+
+- 查看每个目标的采集进度（已采到的 `maxIndex`）
+- 支持「重置到 0」与「指定起点」——两者合成同一个 `PUT` 接口
+- 游标**归属「目标」而不是「任务」**，所以重建任务不会丢掉进度
+
+### 请求审计
+
+- 每一次上游接口调用记一条：页码、状态码、耗时、结果条数、失败原因
+- 只读，不提供删除
+- 失败行在界面上高亮
+
+### 登录
+
+- 单用户写死校验，预留登录入口，服务端不维护会话
+- token 存 `localStorage`，axios 拦截器统一处理失效跳转
+
+---
+
+## 技术栈
+
+### 后端
+
+| 组件 | 版本 | 说明 |
+|---|---|---|
+| Java | **8**（1.8） | `maven.compiler.source/target = 1.8` |
+| Spring Boot | **2.3.12.RELEASE** | 父 POM |
+| Spring Data MongoDB | 由 Boot 管理 | 驱动 **4.0.6** |
+| Apache HttpClient | 4.5.x | ⚠️ 必须是 4.5.x —— Spring Framework 5.2 的 `HttpComponentsClientHttpRequestFactory` **不接受 HttpClient 5.x** |
+| fastjson2 | 2.0.60 | 上游响应解析 |
+| springdoc-openapi-ui | 1.6.15 | Spring Boot 2.x 只能用 1.6.x |
+| Lombok | 由 Boot 管理 | `optional`，不打进产物 |
+| 构建 | Maven 3.8+ | |
+
+> 刻意**没有**引入 Guava —— 只为限速一个功能背 3MB 依赖不划算，
+> 自写的 `SimpleRateLimiter` 十行就够。
+
+### 前端
+
+| 组件 | 版本 |
+|---|---|
+| Vue | 3.4 |
+| Vite | 5.2 |
+| TypeScript | 5.4（严格模式） |
+| Element Plus | 2.7 |
+| Pinia | 2.1 |
+| Vue Router | 4.3（hash 模式） |
+| ECharts | 5.5（按需引入） |
+| Axios | 1.6 |
+| 包管理器 | npm |
+
+### 存储
+
+| 组件 | 版本 | 说明 |
+|---|---|---|
+| MongoDB | 7.0 | 唯一权威存储 |
+| Redis | 3.2 | 依赖与配置保留，**主代码零引用**，见[设计约定](#redis-目前没有被用到) |
+
+---
+
+## 系统架构
+
+### 分层
 
 ```
-book_collector/
-├── database_schema.sql      # 数据库建表SQL
-├── book_api_client.py       # API请求客户端
-├── book_database.py         # 数据库操作类
-├── book_collector.py        # 主程序
-├── requirements.txt         # Python依赖
-├── README.md               # 项目说明
-└── books.json             # 示例API响应数据
+┌───────────────────────────────────────────────────────────┐
+│  前端  Vue 3 + Element Plus（hash 路由）                    │
+│  views / api(axios) / store(Pinia) / components(4 个基础组件) │
+└──────────────────────────┬────────────────────────────────┘
+                           │ HTTP  /api/**   （业务码恒在 body，见「接口约定」）
+┌──────────────────────────▼────────────────────────────────┐
+│  后端  Spring Boot 2.3                                     │
+│                                                            │
+│  Controller      收请求 + 参数校验 + 拼统一响应              │
+│      │                                                     │
+│  Service         业务编排（状态机、级联、查询语义）            │
+│      │                                                     │
+│  Repository      MongoTemplate 数据访问（复杂查询 / 聚合）     │
+│      │                                                     │
+│  Entity          @Document 持久化映射                       │
+│                                                            │
+│  横切：TokenInterceptor（鉴权）/ TraceIdFilter（链路 id）      │
+│        GlobalExceptionHandler（统一异常 → 业务码）            │
+└──────────┬───────────────────────────────┬─────────────────┘
+           │                               │
+    ┌──────▼──────┐                 ┌──────▼──────────────────┐
+    │  MongoDB    │                 │  采集引擎 collector/      │
+    │  8 个集合    │◀────────────────│  CollectLoop + 重试/限速  │
+    └─────────────┘                 └──────┬──────────────────┘
+                                           │ HTTP（伪装 Header）
+                                    ┌──────▼──────────┐
+                                    │  微信读书接口     │
+                                    └─────────────────┘
 ```
 
-## 安装和配置
+### 一次采集任务的完整链路
 
-### 1. 安装Python依赖
+```
+① 建任务        POST /api/tasks           写 collect_tasks（(targetType,targetId) 唯一）
+② 启动          POST /api/tasks/{id}/start
+                  └─ TaskService   → 读游标 collect_cursors 得到起点
+                  └─ TaskRegistry  → 申请采集权（同目标互斥）
+                  └─ TaskRunner    → @Async 提交到采集线程池，立即返回
+③ 执行          CollectLoop 分页主循环（每页）：
+                  限速 → 请求 → 解析 → 先 upsert 落库 → 再推进游标 → 写审计 + 进度日志
+④ 观察          前端手动刷新读 collect_task_runs（进度）与 collect_task_logs（日志）
+⑤ 收尾          写 run 终态 → 更新任务状态 → 释放采集权
+```
+
+关键点：**先落库、再推游标**。这样即使中途崩了，游标也不会跑到数据前面去，
+重跑时最多重复写入（upsert 幂等），不会漏数据。
+
+### 采集引擎的三个关键设计
+
+**1. 幂等写入**
+`books.bookId` 上有唯一索引，写入走 `bulkOps().upsert()` 分片批量执行。
+对同一份响应重复执行结果完全一致：同 `bookId` 不重复插入，也不覆盖 `firstCollectedAt`。
+唯一索引是**正确性依赖**，不是性能优化。
+
+**2. 断点续传**
+游标按「目标」持久化在 `collect_cursors`。任务取消 / 失败 / 应用重启后重新启动，
+都从上次的位置继续，不从头重采。
+
+**3. 限速与重试**
+默认 1 页 / 秒（沿用原 Python 实现的节奏），避免被上游限流。
+失败按 1s → 3s 退避重试，最多 3 次；**4xx 不重试**（重试没有意义）。
+「这一页算不算失败」由采集循环统一判定，不交给 HTTP 客户端库替我们下结论。
+
+### 任务编排
+
+- 采集线程池独立于 Web 线程池：core 1 / max 2 / 队列 16，**满了直接拒绝**而不是阻塞 HTTP 线程
+- 同一目标用内存注册表（`TaskRegistry`）互斥，避免两个任务共享一个游标产生静默的意外行为
+- 暂停用 `ReentrantLock` + `Condition` **阻塞**实现，可以原地恢复，而不是抛异常中断
+- 取消是**协作式**的：立刻置任务状态为 `CANCELED`，采集线程在当页跑完后退出
+- 应用关闭时唤醒所有暂停线程并取消，避免线程泄漏
+
+---
+
+## 数据模型
+
+8 个 MongoDB 集合（库名 `bookcollector`）：
+
+| 集合 | 内容 | 关键约束 |
+|---|---|---|
+| `books` | 采集到的图书（46 个业务字段 + 采集元数据） | 唯一索引 `bookId` |
+| `taxonomy_config` | 分类 / 榜单字典 | 唯一索引 `(type, code)` |
+| `collect_tasks` | 任务定义 | 唯一索引 `(targetType, targetId)` |
+| `collect_task_runs` | 每次运行的流水（进度、终态、耗时） | 索引 `taskId`、`startedAt` |
+| `collect_task_logs` | 运行日志（界面「日志」Tab 读的就是它） | 索引 `runId` |
+| `collect_cursors` | 采集游标 | 唯一索引 `(targetType, targetId)` |
+| `api_requests` | 上游请求审计（每页一条） | 索引 `createdAt`、`runId` |
+| `settings` | 预留 | 唯一索引 `key` |
+
+索引在应用启动时由 `MongoIndexInitializer` 显式创建（共 17 个），
+并带「字段漂移自愈」：索引字段路径改过时先 `drop` 再建。
+
+> ⚠️ `ensureIndex` 的语义是「按名字 upsert」—— 同名索引已存在时**什么都不做**，不比较字段。
+> 所以字段路径写错过一次，光改代码修不好已建出的索引；而且 MongoDB 对「同名不同 key」
+> 会直接报 `IndexKeySpecsConflict` 拒绝重建。
+
+---
+
+## 目录结构
+
+```
+bookcollector-admin/
+├── backend/                      Spring Boot 2.3 + JDK 8
+│   ├── pom.xml
+│   └── src/
+│       ├── main/java/com/bookcollector/
+│       │   ├── BookCollectorApplication.java
+│       │   ├── common/           ResultBean / PageResult / BizException /
+│       │   │                     GlobalExceptionHandler / TraceIdFilter
+│       │   │   └── enums/        TargetType / TaskStatus
+│       │   ├── auth/             写死登录：AuthProperties / TokenInterceptor / AuthController
+│       │   ├── collector/        采集引擎：CollectLoop / WereadClient / BookParser /
+│       │   │                     BookWriter / SimpleRateLimiter / ProgressReporter ...
+│       │   ├── task/             任务编排：TaskService / TaskRunner / TaskRegistry /
+│       │   │                     TaskHandle / TaskRepository / InterruptedTaskDetector
+│       │   ├── book/             图书查询与编辑：BookController / BookService /
+│       │   │                     BookRepository / BookQuery
+│       │   ├── taxonomy/         分类榜单字典
+│       │   ├── cursor/           采集游标
+│       │   ├── stats/            仪表盘聚合（MongoTemplate 聚合管道）
+│       │   ├── audit/            请求审计（写 / 查分离）
+│       │   ├── setting/          预留
+│       │   └── config/           Mongo / MongoIndexInitializer / SeedRunner /
+│       │                         RestTemplateConfig / AsyncConfig / WebMvcConfig / Swagger
+│       ├── main/resources/
+│       │   ├── application.yml
+│       │   └── logback-spring.xml      日志格式与按天滚动
+│       └── test/java/com/bookcollector/  单测 4 个 + 集成测试 6 个
+└── frontend/                     Vue 3 + Vite + TS + Element Plus
+    ├── package.json
+    ├── index.html
+    ├── vite.config.ts            /api → 127.0.0.1:8080 代理
+    └── src/
+        ├── api/                  request.ts（axios 封装 + 失效处理）+ 8 个业务模块
+        ├── components/           BaseChart / ProTable / DetailDrawer / SearchForm
+        ├── composables/          useColumnPrefs.ts（列显隐持久化）
+        ├── config/               menu.ts（菜单唯一真相来源）
+        ├── layouts/              BasicLayout + 侧边栏 / 顶栏 / 面包屑
+        ├── router/               hash 路由 + 登录守卫
+        ├── store/                Pinia：user / app
+        ├── types/                手写 TS 类型
+        ├── utils/                format / echarts（按需引入）/ taskStatus
+        └── views/                Login + dashboard / book / task / taxonomy / cursor / audit
+```
+
+---
+
+## 快速开始
+
+### 前置要求
+
+| 组件 | 版本要求 |
+|---|---|
+| JDK | **8**（必须是 8，Spring Boot 2.3 不支持更高版本编译目标） |
+| Maven | 3.8+ |
+| Node.js | 18+（推荐 20 / 22） |
+| MongoDB | 7.x（5.x / 6.x 亦可） |
+| Redis | 可选 —— 主代码未使用，不启动也不影响运行 |
+
+### 1. 准备 MongoDB
+
+确保 MongoDB 已在本地 `27017` 运行。**不需要手工建库建表** ——
+首次启动时应用会自动建索引（17 个）并 seed 字典（21 个分类 + 7 个榜单）。
+
+### 2. 改配置
+
+编辑 `backend/src/main/resources/application.yml`，按自己的环境调整：
+
+| 配置项 | 默认值 | 说明 |
+|---|---|---|
+| `spring.data.mongodb.uri` | `mongodb://localhost:27017/bookcollector` | 数据库地址 |
+| `server.port` | `8080` | 后端端口（改了要同步改前端 `vite.config.ts` 的代理） |
+| `bookcollector.auth.username` | `admin` | **⚠️ 请改成自己的** |
+| `bookcollector.auth.password` | `admin123` | **⚠️ 请改成自己的** |
+| `bookcollector.auth.token` | `local-dev-token-please-change` | **⚠️ 请改成随机串** |
+| `bookcollector.weread.rate-limit-per-second` | `1.0` | 采集限速（页/秒），调高有被上游限流的风险 |
+| `bookcollector.weread.max-retry` | `3` | 单页失败重试次数 |
+
+> `bookcollector.auth` 是**写死的单用户校验**，第一期不做权限体系，
+> 服务端不维护会话，token 就是一个固定字符串。
+> 默认值只是为了开箱能跑，**公开部署前务必修改**。
+
+### 3. 启动后端
 
 ```bash
-pip install -r requirements.txt
+cd backend
+mvn spring-boot:run
 ```
 
-### 2. 创建数据库
+启动后：
 
-在MySQL服务器上运行 `database_schema.sql` 文件：
+- 服务地址：<http://127.0.0.1:8080>
+- 健康检查：<http://127.0.0.1:8080/api/ping> → `{"code":200,...,"data":{"message":"pong"}}`
+- 接口文档：<http://127.0.0.1:8080/swagger-ui.html>
+  （先点右上角 **Authorize**，粘上 `bookcollector.auth.token` 的值）
+
+### 4. 启动前端
 
 ```bash
-mysql -u your_username -p < database_schema.sql
+cd frontend
+npm install
+npm run dev
 ```
 
-### 3. 配置数据库连接
+访问 <http://127.0.0.1:5173>，用 `application.yml` 里配置的账号密码登录。
 
-修改 `config.py` 中的数据库配置：
+`vite.config.ts` 已配好 `/api` → `127.0.0.1:8080` 的代理，开发期不用处理跨域。
 
-```python
-DATABASE_CONFIG = {
-    'host': '<HOST>', # 请替换为实际的HOST
-    'port': 3306,
-    'user': '<USER>',      # 请替换为实际的用户名
-    'password': '<PASSWORD>',  # 请替换为实际的密码
-    'database': '<DATABASE>' # 请替换为实际的数据库名
+### 5. 试一次采集
+
+1. 打开「分类榜单」，确认已有 21 个分类 + 7 个榜单
+2. 打开「任务中心」→ 新建任务 → 选一个分类 → 保存
+3. 点「启动」，进详情抽屉看「概览」Tab 的进度；想看细节切「运行历史」/「日志」
+4. 采完到「图书库」查书，到「请求审计」看每一次调用的状态码与耗时
+
+### 日志
+
+日志默认写在**启动时工作目录**下的 `logs/bookcollector.log`，按天滚动、保留 30 天。
+
+- 格式与滚动策略定义在 `backend/src/main/resources/logback-spring.xml`
+- 用 `mvn spring-boot:run` 时，`pom.xml` 已注入 `-DLOG_DIR=${project.basedir}/../logs`，
+  日志会稳定落在 `<项目根>/logs/`（因为 fork 出的 JVM 工作目录是 `backend/`）
+- 用 `java -jar` 直接跑时没有这个属性，请显式传 `-DLOG_DIR=<绝对路径>`
+
+---
+
+## 接口约定
+
+所有接口统一返回 `ResultBean<T>`：
+
+```json
+{
+  "code": 200,
+  "message": "",
+  "traceId": "cb58abbb0e614501",
+  "data": {}
 }
 ```
 
-## 使用方法
+| code | 含义 |
+|---|---|
+| **200** | 成功 ← **注意是 200，不是 0** |
+| 400 | 参数错误 |
+| 404 | 资源不存在 |
+| 405 | 主键重复 |
+| 500 | 系统错误 |
+| 4100 | 身份已失效，前端跳登录 |
 
-### 基本使用
+### HTTP 状态码恒为 200，业务结果看 body 里的 `code`
 
-```python
-from book_collector import BookCollector
+这样前端只需要在 axios 拦截器里判断一处。
 
-# 创建收集器实例
-collector = BookCollector(db_config)
+**鉴权失败返的是 HTTP 200 + `code=4100`，不是 401** —— 这一条反直觉，但很重要：
 
-# 收集单个分类的图书
-books = collector.collect_books_by_category(300000, max_pages=10)
+- 后端用 `TokenInterceptor`（`HandlerInterceptor`，不是 Filter）拦 `/api/**`，
+  放行 `/api/auth/login` 与 `/api/ping`；校验失败时**自己往 response 写 JSON**，
+  HTTP 状态码设 200、body 里 `code=4100`
+  （`preHandle` 返回 `false` 后 `GlobalExceptionHandler` 不会介入，所以必须自己写）
+- 用 Interceptor 而不是 Filter：Filter 只能按 `urlPatterns` 前缀匹配，
+  而 `/api/auth/login`、`/api/ping` 与要拦的其余 `/api/**` 混在同一前缀下，
+  Interceptor 的 `excludePathPatterns` 表达力正好够
+- 前端响应拦截器**只看 body 里的 `code`，不看 HTTP 状态码**；
+  收到 4100 → 提示重新登录 → 清 token → 跳登录页
 
-# 收集多个分类的图书
-results = collector.collect_multiple_categories([300000, 100000], max_pages_per_category=5)
+### 其他约定
 
-# 收集榜单图书
-books = collector.collect_ranking_books('rising', max_pages=10)
+- **参数校验消息**排序 + 限 3 条 + 换成人话（Validator 不保证 `getFieldErrors()` 顺序）
+- **编辑一律「只写传了的字段」**，绝不整本 `save()`
+- **删除语义**：删任务级联删 runs + logs，**不删游标**；
+  删字典项时有任务引用则拒绝，只有游标则顺带清掉
+- **`code` / `targetType` / `targetId` 不可改** —— 用 DTO 字段缺失让「不能改」在类型层面成立
+- **聚合管道直接写 `Document`**，方便复制到 mongosh 单独调试
 
-# 收集多个榜单的图书
-results = collector.collect_multiple_rankings(['rising', 'hot_search'], max_pages_per_ranking=5)
+---
 
-### 运行主程序
+## 设计约定
+
+### `books` 的语义是「历史累计的并集」，不是「当前榜单的快照」
+
+上游分类列表按 `readingCount` 排序，**并列时 tie-break 不稳定**。
+实测同一个分类的前 100 名在几分钟内就会换掉一两本，而且是**来回抖**的
+（掉出去的书过一会儿还会回来）。
+
+| 时间尺度 | 行为 |
+|---|---|
+| 秒级（同一轮内） | **完全稳定** —— 同范围两次请求，`bookId` 集合一模一样 |
+| 分钟级（跨轮） | **会漂移** —— 边界上有书进出 |
+
+因此：
+
+- **不要**拿 `books` 的总数去跟接口返回的 `totalCount` 对账（一个是并集，一个是当前快照）
+- 跨较长时间重采同一范围，`books` 总数可能 ±N —— **这不是 bug**
+- 幂等性的准确表述是「**对同一份响应，upsert 幂等**」，
+  而不是「集合总数恒定」
+
+这也是**永不删除**这条约定的由来：掉出榜单的书几分钟后还可能回来，
+若按「以最新榜单为准、删掉不在榜的书」实现，数据会被反复删建。
+
+### 上游接口每个分类**最多只给 500 本（25 页）** —— 上游硬上限
+
+`/web/bookListInCategory/{id}` 对所有分类都只给到 `maxIndex=480` 那一页：
+
+| maxIndex | 返回 |
+|---|---|
+| 0 / 480 | 20 本，`hasMore=1`，`totalCount=54086` |
+| **500 起** | **`{"books":[],"hasMore":0}`（36 字节）** |
+
+实测多个分类（文学 / 精品小说 / 计算机 / 童书）行为完全一致；榜单更短
+（飙升榜 `totalCount=39`，只有 2 页）。
+
+**所以**：
+
+- 一个分类任务的天然跑道是 **25 页 ≈ 29 秒**（限速 1 页/秒），
+  把页数上限设成 60 也没用 —— 第 26 页拿到空列表就正常结束了
+- 界面上的「该目标共 54086 本」是**上游报的总数**，不代表能采完，不要拿它当进度分母
+- **这不是 bug**：代码对空页的处理是对的（`hasMore=false` → 正常结束，不报错、不死循环）
+
+### Redis 目前没有被用到
+
+`spring-boot-starter-data-redis` 依赖和 `spring.redis.*` 配置都留着，
+但**主代码零引用**。这是**有意的**：
+
+- 任务状态以 **MongoDB 为权威**（要能重启后恢复，Redis 3.2 没有持久化保证）
+- 采集锁用进程内注册表（单机单进程，够用）
+- 限速用自写的 `SimpleRateLimiter`（十行，不需要分布式）
+
+Lettuce 是懒连接，留着几乎零成本。若后续也用不到，删掉 `pom.xml` 的 4 行依赖
+与 `application.yml` 的配置段即可。
+
+---
+
+## 测试
+
+### 单元测试（离线，不联网，不依赖上游）
 
 ```bash
-python book_collector.py
+cd backend
+mvn test
 ```
 
-### 命令行工具使用
+覆盖：数据层（集合 / 索引 / seed / 幂等 upsert）、字段映射解析（46 字段逐一断言）、
+任务状态机与并发拒绝、接口契约（35 个端点清点 / 错误码 / 响应体不泄漏内部字段）。
 
-#### 基本收集
+### 集成测试（**联网**，打真实上游接口）
+
+集成测试类以 `*IT` 结尾，不在 `mvn test` 的默认扫描范围内，需要显式指定：
+
 ```bash
-# 显示可用分类
-python run.py --categories
-
-# 收集指定分类的图书
-python run.py --collect 300000 100000 --pages 5
-
-# 收集所有分类的图书
-python run.py --all --pages 3
-
-# 从指定索引开始收集
-python run.py --from-index 300000 1000 --pages 3
-
-# 继续上次未完成的收集
-python run.py --continue-collection 300000 --pages 5
-
-# 显示指定分类的最后请求索引
-python run.py --last-index 300000
-
-# 显示统计信息
-python run.py --stats
-
-# 显示高分图书
-python run.py --top 10
-
-# 测试API连接
-python run.py --test
+cd backend
+mvn test -Dtest='*IT'
 ```
 
-#### 榜单收集
+覆盖：真实采集（幂等 / 断点续传 / 页数上限）、分页列表短时稳定性、
+任务启停暂停恢复取消、字典与游标生命周期、图书查询语义、
+以及**对端异常**（5xx 重试满次数 / 4xx 只请求一次 / 断网重试）。
+
+> 其中「对端异常」那组用一个本地 `HttpServer` 冒充上游，
+> 通过 `@DynamicPropertySource` 改掉 `bookcollector.weread.base-url` ——
+> 这样能精确数出服务端实际收到几次请求，是验证「重试几次」唯一诚实的办法。
+
+---
+
+## 常见问题
+
+### 1. `mvn` 报「找不到或无法加载主类 org.codehaus.plexus.classworlds.launcher.Launcher」
+
+在 Git Bash / MSYS 环境下，Maven 自带的 POSIX 启动脚本可能识别不出 MSYS，
+把 `/c/...` 这种 Unix 路径原样喂给了 Windows 版 `java.exe`。
+
+**改用 `mvn.cmd`**（或直接在 PowerShell / CMD 里执行），即可绕过。
+
+### 2. 中文乱码
+
+- HTTP 响应：已通过 `server.servlet.encoding.force: true` 解决
+- 应用 JVM 的 `file.encoding`：`spring-boot:run` 会 fork 新 JVM，`MAVEN_OPTS` 传不进去，
+  已在 `pom.xml` 的 `<jvmArguments>` 里显式设 `-Dfile.encoding=UTF-8`
+- 读取上游响应体：刻意用 `byte[]` + 手工 UTF-8 解码，
+  避开 `StringHttpMessageConverter` 在响应头没带 charset 时退回 ISO-8859-1 的坑
+- **日志**：logback encoder 的 charset **独立于** `file.encoding`，
+  所以 `logback-spring.xml` 里每处都显式写了 `<charset>UTF-8</charset>`
+
+### 3. `mvn spring-boot:run | tail -20` 看不到任何输出
+
+`tail` 会缓冲，进程不退出就一行都不输出。改成重定向到文件：
+
 ```bash
-# 显示可用榜单
-python run.py --rankings
-
-# 收集指定榜单的图书
-python run.py --ranking rising hot_search --pages 5
-
-# 收集所有榜单的图书
-python run.py --all-rankings --pages 3
+mvn spring-boot:run > backend.log 2>&1
+tail -f backend.log
 ```
 
-#### 大量数据处理策略
+### 4. MongoDB 连不上（驱动版本）
 
-**场景：收集所有分类的图书**
-```bash
-# 收集所有分类的图书（每个分类5页）
-python run.py --all --pages 5
+Spring Boot 2.3.12 管理的驱动是 **4.0.6**，对 MongoDB 7.0 是官方 **⊛ 部分兼容** ——
+能连上、能跑 CRUD，只是用不到 7.0 的新特性。
 
-# 收集所有分类的图书（每个分类10页）
-python run.py --all --pages 10
+真要连不上，把 `backend/pom.xml` 里这行的注释去掉（4.10+ 才是「✓ 完全兼容」，
+且 4.11 仍支持 Java 8）：
+
+```xml
+<mongodb.version>4.11.1</mongodb.version>
 ```
 
-**注意事项：**
-- 这将收集 `config.py` 中定义的所有分类
-- 总共会处理 21 个分类
-- 建议先用较小的页数测试，确认正常后再增加页数
-- 整个过程可能需要较长时间，请耐心等待
+### 5. Redis 配置前缀写错
 
-**场景：每个分类有几万本书**
+Spring Boot 2.3 用 **`spring.redis.*`**，不是 Spring Boot 3 的 `spring.data.redis.*`。
 
-策略1：分批收集
-```bash
-# 第一次收集（前1000本）
-python run.py --collect 300000 --pages 20
+### 6. 启用 Lettuce 连接池后报 `ClassNotFoundException: GenericObjectPoolConfig`
 
-# 继续收集（从上次停止的地方）
-python run.py --continue-collection 300000 --pages 20
+配了 `spring.redis.lettuce.pool.*` 就必须加 `org.apache.commons:commons-pool2` 依赖。
+本项目**没有用连接池** —— 单机单任务场景下 Lettuce 的共享单连接足够。
 
-# 重复执行直到收集完成
-```
+### 7. 前端改了代码但页面没变化
 
-策略2：指定索引收集
-```bash
-# 查看当前进度
-python run.py --last-index 300000
+Vite 的 HMR 对**新增文件**和**路由表改动**经常不生效（尤其 `router/index.ts`
+和 `main.ts`）。手动 `Ctrl+Shift+R` 强刷一次，或在 dev server 终端按 `r` 重启。
+改了 `vite.config.ts` 则**必须**重启 dev server。
 
-# 从指定位置继续
-python run.py --from-index 300000 5000 --pages 20
-```
+### 8. 采集任务启动就失败 / 一页都采不到
 
-策略3：编程方式批量处理
-```python
-import time
-from book_collector import BookCollector
-from config import DATABASE_CONFIG
+按顺序排查：
 
-collector = BookCollector(DATABASE_CONFIG)
-category_id = 300000
+1. 看「请求审计」页的状态码与失败原因 —— 上游是 4xx 还是 5xx 一目了然
+2. 看「任务中心 → 详情 → 日志」Tab 的具体报错
+3. 网络是否可达 `weread.qq.com`
+4. 是不是同一目标已经有任务在跑（同一目标只允许一个任务）
 
-while True:
-    # 继续收集
-    result = collector.continue_collection(category_id, max_pages=10)
-    
-    print(f"本次收集: {result['book_count']} 本")
-    print(f"最后索引: {result['last_index']}")
-    
-    # 如果没有更多数据，退出
-    if result['book_count'] == 0:
-        print("收集完成！")
-        break
-    
-    # 等待一段时间再继续
-    time.sleep(5)
-```
+---
 
-### 获取统计信息
+## 说明
 
-```python
-# 获取数据库统计
-stats = collector.get_database_statistics()
-print(f"总图书数量: {stats['total_books']}")
-
-# 获取高分图书
-top_books = collector.get_top_books(10)
-for book in top_books:
-    print(f"{book['title']} - 评分: {book['new_rating']}")
-
-# 从指定索引开始收集
-result = collector.collect_books_from_index(300000, 1000, max_pages=5)
-
-# 继续上次未完成的收集
-continue_result = collector.continue_collection(300000, max_pages=3)
-
-# 获取最后请求索引
-last_index = collector.get_last_request_index(300000)
-```
-
-## 常用分类ID
-
-| 分类ID | 分类名称 | 预估图书数量 |
-|--------|----------|-------------|
-| 300000 | 文学 | 4万+ |
-| 100000 | 精品小说 | 3万+ |
-| 200000 | 历史 | 2万+ |
-| 400000 | 艺术 | 1.5万+ |
-| 500000 | 人物传记 | 1万+ |
-
-## 索引说明
-
-- **maxIndex**: API分页参数，表示从第几本书开始获取
-- **search_idx**: 每本书的唯一索引，用于下次请求
-- **自动递增**: 程序会自动使用最后一本书的search_idx作为下次请求的maxIndex
-
-## 最佳实践
-
-### 1. 首次收集
-```bash
-# 先收集少量数据测试
-python run.py --collect 300000 --pages 5
-
-# 确认正常后，开始大量收集
-python run.py --collect 300000 --pages 50
-```
-
-### 2. 断点续传
-```bash
-# 查看进度
-python run.py --last-index 300000
-
-# 继续收集
-python run.py --continue-collection 300000 --pages 50
-```
-
-### 3. 监控进度
-```bash
-# 查看统计信息
-python run.py --stats
-
-# 查看高分图书
-python run.py --top 10
-```
-
-### 4. 错误恢复
-```bash
-# 如果程序中断，查看最后索引
-python run.py --last-index 300000
-
-# 从该索引继续
-python run.py --from-index 300000 [最后索引] --pages 20
-```
-
-## 数据库表结构
-
-### 主要表
-
-1. **books** - 图书基本信息
-2. **book_categories** - 图书分类关联
-3. **book_rating_details** - 评分详情
-4. **api_requests** - API请求记录
-
-### 常用分类ID
-
-- `300000` - 文学
-- `100000` - 精品小说
-- `200000` - 经管励志
-- `400000` - 人文社科
-- `500000` - 生活艺术
-
-### 榜单类型
-
-- `rising` - 飙升榜
-- `hot_search` - 热搜榜
-- `newbook` - 新书榜
-- `general_novel_rising` - 小说飙升榜
-- `all` - 总榜
-- `newrating_publish` - 新评分出版榜
-- `newrating_potential_publish` - 新评分潜力出版榜
-
-## API说明
-
-### 请求地址
-
-```
-https://weread.qq.com/web/bookListInCategory/{category_id}?maxIndex={max_index}
-```
-
-### 参数说明
-
-- `category_id`: 分类ID，用于获取不同分类的图书
-- `max_index`: 分页索引，用于分页获取数据
-
-### 返回数据
-
-API返回JSON格式的图书列表，包含图书的详细信息如标题、作者、评分、价格等。
-
-## 注意事项
-
-1. **请求频率**: 程序已内置1秒延迟，避免请求过于频繁
-2. **数据更新**: 程序会自动处理重复数据，已存在的图书会更新信息
-3. **错误处理**: 程序包含完善的错误处理和日志记录
-4. **数据库连接**: 使用上下文管理器确保数据库连接正确关闭
-5. **数据完整性**: 程序会自动去重，重复运行安全
-6. **网络稳定**: 确保网络连接稳定，程序会自动重试
-
-## 故障排除
-
-### 常见问题
-
-1. **网络错误**: 检查网络连接，程序会自动重试
-2. **数据库连接失败**: 检查数据库配置和连接信息
-3. **索引错误**: 使用 `--last-index` 查看当前进度
-4. **数据重复**: 程序会自动处理，无需担心
-5. **datetime字段错误**: 程序已修复空字符串导致的datetime错误
-
-
-### 调试命令
-```bash
-# 测试API连接
-python run.py --test
-
-# 查看数据库统计
-python run.py --stats
-
-# 查看日志文件
-tail -f book_collector.log
-```
-
-## 日志文件
-
-程序运行时会生成 `book_collector.log` 日志文件，记录详细的执行信息。
-
-## 扩展功能
-
-可以根据需要扩展以下功能：
-
-- 图书搜索功能
-- 数据导出功能
-- Web界面展示
-- 定时任务调度
-- 数据分析和可视化
-
-## 许可证
-
-本项目仅供学习和研究使用，请遵守相关网站的使用条款。
-
-## 贡献
-
-欢迎提交Issue和Pull Request来改进这个项目。 
+本项目仅用于个人学习与技术研究，采集的数据请勿用于商业用途。
+请遵守目标站点的服务条款与相关法律法规，并自行控制采集频率。

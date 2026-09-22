@@ -1,0 +1,102 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: bookcollector-admin
+
+  # ------------------------------------------------------------------
+  # MongoDB 7.0.30
+  # 驱动由 Spring Boot 2.3.12 管理，版本 4.0.6。
+  # 官方兼容表：4.0 对 MongoDB 7.0 是「⊛ 部分兼容」—— 能连上、能跑 CRUD，
+  # 只是用不到 7.0 的新特性。对第一期（增删改查 + 分页）没有影响。
+  # 若连不上，在 pom.xml 里打开 <mongodb.version>4.11.1</mongodb.version>。
+  # ------------------------------------------------------------------
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/bookcollector
+      auto-index-creation: false
+
+  # ------------------------------------------------------------------
+  # Redis 3.2.100
+  # ⚠️ Spring Boot 2.3 的前缀是 spring.redis.*，不是 spring.data.redis.*
+  #    客户端是 Lettuce 5.3.x，不会发 CLIENT SETINFO（Redis 7.2 才有的命令），
+  #    所以与 3.2.100 兼容。
+  #
+  # 刻意不配 lettuce.pool.*：启用连接池需要额外引 commons-pool2，
+  # 而本机单用户、同时最多 1 个采集任务，Lettuce 的共享单连接完全够用。
+  # 真要用池（高并发场景）时再加 commons-pool2 并把 pool 段加回来。
+  # ------------------------------------------------------------------
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+
+  # 关掉 Spring Boot 的启动 banner（日志更干净）
+  main:
+    banner-mode: off
+
+# ------------------------------------------------------------------
+# 微信读书接口
+# ------------------------------------------------------------------
+bookcollector:
+  weread:
+    base-url: https://weread.qq.com/web/bookListInCategory
+    referer: https://weread.qq.com/
+    connect-timeout: 10000
+    read-timeout: 30000
+    # 1 = 每页间隔 1 秒，沿用原 Python 的 time.sleep(1)
+    rate-limit-per-second: 1.0
+    max-retry: 3
+    audit-enabled: true
+
+  # 写死登录（第一期不做权限体系）
+  auth:
+    username: admin
+    password: admin123
+    token: local-dev-token-please-change
+
+  # ------------------------------------------------------------------
+  # 任务编排
+  # ------------------------------------------------------------------
+  task:
+    # 同时允许运行的采集任务数。
+    # 默认 1：接口限速是全局的（1 秒/页），并发跑两个任务等于把请求频率翻倍，
+    # 有被微信读书限流的风险。对齐 2.5 非功能需求「同时最多 1 个采集任务在跑」。
+    max-concurrent-runs: 1
+    # 采集线程池队列容量，满了直接拒绝（不阻塞 HTTP 线程）
+    queue-capacity: 16
+    run-list-limit: 50
+    log-list-limit: 500
+
+# ------------------------------------------------------------------
+# 日志
+#
+# ⚠️ 输出格式与「按天滚动 + 保留 30 天」都在 logback-spring.xml 里定义，
+#    不在这里配 —— 这里只留「级别」。
+#    为什么：
+#    - `logging.pattern.*` 只对 Spring Boot 默认的 appender 生效；我们自定义了
+#      CONSOLE / FILE 两个 appender，写在这里是**死配置**，会让人以为改了有用。
+#    - `logging.file.name` 只能写单文件、**不滚动**，跑几天就是几百 MB。
+#    文件落在 <启动时的工作目录>/logs/bookcollector.log。
+# ------------------------------------------------------------------
+logging:
+  level:
+    root: INFO
+    com.bookcollector: DEBUG
+    # Mongo 驱动的连接日志比较吵，压到 WARN
+    org.mongodb.driver: WARN
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs

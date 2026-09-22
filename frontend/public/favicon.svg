@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!--
+    站点图标。
+    之所以要有这个文件：Chrome 会自动请求 /favicon.ico，没有就会在控制台留下
+    一条 404 —— 那条 404 会让「控制台无报错」这个验收标准失效，
+    也会掩盖真正的错误。用 SVG 是因为不用生成多尺寸位图。
+  -->
+  <rect width="32" height="32" rx="7" fill="#409eff"/>
+  <path d="M10 7h8.5A4.5 4.5 0 0 1 23 11.5V25H14a4 4 0 0 1-4-4V7z" fill="#ffffff"/>
+  <path d="M14 12h5M14 16h5M14 20h3" stroke="#409eff" stroke-width="1.7" stroke-linecap="round"/>
+</svg>

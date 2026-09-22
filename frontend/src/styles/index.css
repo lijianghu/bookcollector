@@ -1,0 +1,85 @@
+/**
+ * 全局样式。
+ *
+ * 只做三件事：reset、页面骨架类、滚动条。
+ * 组件自己的样式一律写在 `<style scoped>` 里，不要往这里堆 ——
+ * 全局样式改一处影响所有页面，是后期最难收拾的债。
+ */
+
+/* ---------------- reset ---------------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', Arial, sans-serif;
+  font-size: 14px;
+  color: #303133;
+  background: #f5f7fa;
+  /* 关掉 iOS 上的字号自动放大 */
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  color: #409eff;
+  text-decoration: none;
+}
+
+/* ---------------- 页面骨架 ---------------- */
+
+/*
+ * 每个页面最外层都用 .page。
+ * 不用 el-card 包整页，是因为卡片自带内边距和阴影，
+ * 多个卡片叠在一起会显得很「糊」；页面级留白交给布局层。
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 卡片之间的间距，等价于 .page 的 gap，给不便于用 gap 的场景兜底 */
+.mt-16 {
+  margin-top: 16px;
+}
+
+.text-muted {
+  color: #909399;
+}
+
+.text-mono {
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+  font-size: 12px;
+}
+
+/* 表格里的数字右对齐，看起来更整齐 */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- 滚动条 ---------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8c9cc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8abb2;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  日志配置。
+
+  <h3>为什么不用 application.yml 的 logging.file.*</h3>
+  Spring Boot 自带的 `logging.file.name` 只做「写一个文件」，**没有滚动**——
+  跑几天就是一个几百 MB 的单文件。S7 要求「按天滚动 + 保留 30 天」，
+  这必须用 logback 的 `TimeBasedRollingPolicy`，所以配置挪到这里。
+
+  <h3>为什么每处都要显式写 charset=UTF-8</h3>
+  🔴 本机 Maven / JVM 的平台默认编码是 **GBK**。logback 的 encoder 不显式指定时
+  用的是 `Charset.defaultCharset()` —— 于是日志文件里的中文全是乱码。
+  `pom.xml` 里的 `-Dfile.encoding=UTF-8` 管的是 JVM 默认编码，
+  但 logback 的 encoder 有自己的 charset 属性，**必须两处都设**才稳。
+
+  <h3>为什么 console 和 file 的 pattern 不一样</h3>
+  - console：`HH:mm:ss.SSS` 就够（人在看，不需要日期），行短一点更好读。
+  - file：**必须带完整日期**。文件是跨天滚动的，同一份内容里混着不同天的记录，
+    只有时间没有日期根本没法定位。
+
+  <h3>关于 `%X{threadId}`</h3>
+  这是 `TraceIdFilter` 塞进 MDC 的 traceId（key 必须叫 `threadId`，
+  因为 `ResultBean` 就是按这个名字取的）。带上它，才能拿接口响应里的 traceId
+  直接到日志里 grep 出整条链路。
+  启动阶段、定时任务、采集线程没有 traceId 时会渲染成 `[]` —— 这是预期的，不是 bug。
+  （采集线程自己 `MDC.put`，见 `TaskRunner`。）
+
+  <h3>日志落在哪</h3>
+  `<项目根>/logs/bookcollector.log`。
+
+  ⚠️ 这个位置不是「碰巧对」的，是靠 `pom.xml` 里给 spring-boot:run 注入的
+  `-DLOG_DIR=${project.basedir}/../logs`（**绝对路径**）保证的。
+  原因：spring-boot:run fork 出来的 JVM，工作目录是 `backend/` 而不是项目根，
+  所以下面的默认值 `logs` 会落到 `backend/logs/` —— 日志「莫名消失」很难查。
+  直接 `java -jar` 跑时没有那个插件参数，会退回默认值 `logs`（相对于当时的 CWD），
+  那时请自己加 `-DLOG_DIR=D:\...\logs`。
+-->
+<configuration>
+
+  <!-- 日志目录。spring-boot:run 会通过 -DLOG_DIR 注入绝对路径；其余场景退回相对路径 -->
+  <property name="LOG_DIR" value="${LOG_DIR:-logs}"/>
+
+  <!-- ==================== 控制台 ==================== -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level [%X{threadId}] %logger{36} - %msg%n</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- ==================== 文件（按天滚动，保留 30 天） ==================== -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 当天正在写的文件。历史文件是 bookcollector.2026-09-22.log 这种 -->
+    <file>${LOG_DIR}/bookcollector.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/bookcollector.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- 保留 30 天。注意：只在滚动那一刻清理，不是定时任务 -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{threadId}] %logger{36} - %msg%n</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!--
+    级别不在这里写死。
+    `application.yml` 的 `logging.level.*`（root=INFO、com.bookcollector=DEBUG、
+    org.mongodb.driver=WARN）由 Spring Boot 在加载完本文件之后套用，
+    这里再写一遍就成了两处定义，迟早对不上。
+  -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+</configuration>
