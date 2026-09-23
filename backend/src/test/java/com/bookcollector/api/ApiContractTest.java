@@ -2,6 +2,7 @@ package com.bookcollector.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,10 +133,50 @@ class ApiContractTest {
     @Autowired
     private RequestMappingHandlerMapping handlerMapping;
 
-    @Value("${bookcollector.auth.token}")
+    /** 初始管理员的登录名。来自**播种**配置，不是「登录校验的来源」 */
+    @Value("${bookcollector.auth.initial-username}")
+    private String username;
+
+    /** 初始管理员的明文密码（库里那条账号就是用它播种的） */
+    @Value("${bookcollector.auth.initial-password}")
+    private String password;
+
+    /**
+     * 真实登录拿到的 token。
+     *
+     * <h3>🔴 为什么不能像改造前那样从配置里读</h3>
+     * 改造前 token 是 {@code bookcollector.auth.token} 里写死的常量，
+     * 所以测试直接 {@code @Value} 注入就能用。现在 token 是 Sa-Token
+     * 签发、存在 Redis 里的会话凭据 —— <b>配置里根本没有它的值</b>，
+     * 这正是本次改造的目的（token 不再是「一把约定好的钥匙」）。
+     *
+     * <p>所以改成 {@link #loginOnce()} 在每个测试前真实登录一次。
+     * 附带的好处是：登录链路从此成为<b>每个</b>契约测试的前置条件，
+     * 它一旦坏掉整个类都会红，而不是只有一个专门的用例红。
+     */
     private String token;
 
     private final ObjectMapper json = new ObjectMapper();
+
+    /**
+     * 每个测试前登录一次，拿到可用 token。
+     *
+     * <p>对「不带头 → 4100」这类用例来说这次登录是多余的，但代价只是一次
+     * MockMvc 调用；换来的是「取 token 的逻辑只有一份」，
+     * 不必在十几个方法里各写一遍。
+     */
+    @BeforeEach
+    void loginOnce() throws Exception {
+        JsonNode body = readJson(mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
+                .andReturn());
+        assertEquals(200, body.get("code").asInt(),
+                "登录失败，后续用例没有意义（code=" + body.get("code").asInt()
+                        + " message=" + body.get("message").asText() + "）");
+        token = body.get("data").get("token").asText();
+        assertFalse(token.trim().isEmpty(), "登录必须返回非空 token");
+    }
 
     // ==================================================================
     // 验收标准 1：端点齐全
@@ -192,13 +233,17 @@ class ApiContractTest {
     }
 
     @Test
-    @DisplayName("验收②补：错误 token / 只带前缀 → 同样 4100")
+    @DisplayName("验收②补：错误 token / 只带前缀 / 少前缀 / 别的 header → 一律 4100")
     void wrongTokenIsRejected() throws Exception {
         assertEquals(4100, codeOf(get("/api/books").header(TOKEN_HEADER, "Bearer wrong-token")));
         assertEquals(4100, codeOf(get("/api/books").header(TOKEN_HEADER, "Bearer ")));
-        assertEquals(4100, codeOf(get("/api/books").header(TOKEN_HEADER, token + "x")));
-        // 备用头也不能少校验
-        assertEquals(4100, codeOf(get("/api/books").header("X-Token", "nope")));
+        // 少了 Bearer 前缀：Sa-Token 的裁剪条件是「以 'Bearer ' 开头」，
+        // 不匹配时它取不到 token（而不是把整串当 token 去查）
+        assertEquals(4100, codeOf(get("/api/books").header(TOKEN_HEADER, token)));
+        // 改造后 token 只有一个入口（sa-token.is-read-header=true、
+        // is-read-body=false、is-read-cookie=false），旧的备用头 X-Token 不再被读取。
+        // 这条断言把「只有一个入口」这个设计固化成契约。
+        assertEquals(4100, codeOf(get("/api/books").header("X-Token", token)));
     }
 
     @Test
@@ -212,21 +257,24 @@ class ApiContractTest {
     }
 
     @Test
-    @DisplayName("登录成功返回写死的 token，且 /api/auth/me 可用它访问")
-    void loginReturnsConfiguredToken() throws Exception {
-        MvcResult result = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
-                .andReturn();
-        JsonNode body = readJson(result);
-        assertEquals(200, body.get("code").asInt());
-        assertEquals(token, body.get("data").get("token").asText(), "返回的 token 应与配置一致");
-
-        // 用拿到的 token 访问 /api/auth/me
+    @DisplayName("登录签发的 token 可用；登出后同一 token 立即失效（改造前做不到）")
+    void loginTokenIsRevocable() throws Exception {
+        // 用 @BeforeEach 登录拿到的 token 访问 /me
         JsonNode me = readJson(mockMvc.perform(get("/api/auth/me")
                 .header(TOKEN_HEADER, "Bearer " + token)).andReturn());
         assertEquals(200, me.get("code").asInt());
-        assertEquals("admin", me.get("data").get("username").asText());
+        assertEquals(username, me.get("data").get("username").asText());
+
+        // 登出：服务端**真的**把会话从 Redis 删掉
+        JsonNode logout = readJson(mockMvc.perform(post("/api/auth/logout")
+                .header(TOKEN_HEADER, "Bearer " + token)).andReturn());
+        assertEquals(200, logout.get("code").asInt(), "登出应返回 code=200");
+
+        // 同一个 token 再用 → 4100。
+        // 🔴 这是改造前**不可能成立**的断言：那时 token 是写死的常量，
+        //    logout 只是给前端一个「可以清了」的应答，服务端照单全收。
+        assertEquals(4100, codeOf(get("/api/auth/me").header(TOKEN_HEADER, "Bearer " + token)),
+                "登出后原 token 必须立即失效（会话已从 Redis 删除）");
     }
 
     // ==================================================================
@@ -296,7 +344,7 @@ class ApiContractTest {
         assertEquals(400, bizError.get("code").asInt());
         assertNoLeakedFields(bizError, "业务异常响应");
 
-        // 鉴权失败响应（由 TokenInterceptor 自己写 JSON，不走异常处理器）
+        // 鉴权失败响应（由 AuthInterceptor 自己写 JSON，不走异常处理器）
         JsonNode sessionInvalid = readJson(mockMvc.perform(get("/api/books")).andReturn());
         assertEquals(4100, sessionInvalid.get("code").asInt());
         assertNoLeakedFields(sessionInvalid, "鉴权失败响应");

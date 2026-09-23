@@ -56,11 +56,21 @@ bookcollector:
     max-retry: 3
     audit-enabled: true
 
-  # 写死登录（第一期不做权限体系）
+  # ------------------------------------------------------------------
+  # 登录与鉴权
+  #
+  # ⚠️ 这里的账号密码**不是**登录校验的来源，只是「首次启动时播种的初始管理员」。
+  #    真正的校验对象是 sys_user 集合里的记录（密码存 MD5 摘要，见 util/Md5Util）。
+  #    库里已有同名用户时这段配置完全不生效（见 SeedRunner.seedSysUser 的幂等策略）——
+  #    所以**改密码改库即可**，不用动这里、也不用重启。
+  #    它只在「库是空的」那一次用得上。
+  #
+  # 鉴权本身的配置不在这里，在下面的 sa-token.* 段。
+  # ------------------------------------------------------------------
   auth:
-    username: admin
-    password: admin123
-    token: local-dev-token-please-change
+    initial-username: admin
+    initial-password: admin123
+    initial-nickname: 管理员
 
   # ------------------------------------------------------------------
   # 任务编排
@@ -74,6 +84,59 @@ bookcollector:
     queue-capacity: 16
     run-list-limit: 50
     log-list-limit: 500
+
+# ------------------------------------------------------------------
+# Sa-Token 登录认证
+#
+# 只列了真正需要的项，完整清单（含默认值）见依赖包内的
+# META-INF/spring-configuration-metadata.json，或官网配置文档。
+#
+# ⚠️ 本项目用的是**自定义 loginType**（AuthStpUtil.LOGIN_TYPE =
+#    "bookcollector-admin"），不是 Sa-Token 默认的 StpUtil（loginType="login"）。
+#    所有 Redis key 都带这个前缀 —— 本机 Redis 是 database 0，
+#    多个本地项目共用，不带前缀会出现「登录了 A 项目，B 项目也变成已登录」的串号。
+# ------------------------------------------------------------------
+sa-token:
+  # 前端 axios 发的是 `Authorization: Bearer <token>`
+  # （frontend/src/api/request.ts 的请求拦截器），所以这两项必须成对设置。
+  #
+  # ⚠️ Sa-Token 的裁剪条件是「tokenValue.startsWith(prefix + " ")」，
+  #    即 Bearer 后面那个空格是**必须**的。前端正好是这个格式 ——
+  #    因此这次改造前端零改动。
+  token-name: Authorization
+  token-prefix: Bearer
+
+  # 有效期 30 天，且不因闲置而过期（-1 = 不检查活跃时间）。
+  # 理由：本机单用户工具，频繁要求重新登录只会让人烦；
+  # 真正的安全边界是「只绑 127.0.0.1」和「不落明文密码」，不是 token 时长。
+  timeout: 2592000
+  active-timeout: -1
+
+  # 允许多端同时登录，且同一账号重复登录**复用同一个 token**。
+  # is-share=true 让「刷新页面 → 重新登录」不会把上一次的 token 弄失效，
+  # 本地工具里这比「后登的踢掉先登的」省事得多。
+  is-concurrent: true
+  is-share: true
+
+  # token 形态：32 位无连字符的 uuid（比默认的 xxxx-xxxx-xxxx-xxxx 短、好复制）
+  token-style: simple-uuid
+
+  # 只从**请求头**取 token。刻意关掉「请求参数」和「cookie」两条来源：
+  # token 只有一个入口，排障和审计都不用猜「这次是哪个位置带的」。
+  # 代价：curl 调试必须用 `-H "Authorization: Bearer xxx"`，
+  #      不能像改造前那样拼 `?token=xxx`。
+  is-read-header: true
+  is-read-body: false
+  is-read-cookie: false
+
+  # 不回写响应头。token 只在登录响应体里给一次（data.token），
+  # 之后每个响应都回写等于把凭据撒进所有访问日志和抓包文件里。
+  is-write-header: false
+
+  # 不打 Sa-Token 自己的操作日志（DEBUG 级，本地会刷屏）
+  is-log: false
+  # 不打印启动时的版本字符画
+  is-print: false
 
 # ------------------------------------------------------------------
 # 日志

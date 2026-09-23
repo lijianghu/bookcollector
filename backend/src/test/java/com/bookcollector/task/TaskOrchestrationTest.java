@@ -3,9 +3,13 @@ package com.bookcollector.task;
 import com.bookcollector.common.BizException;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.common.enums.TaskStatus;
-import com.bookcollector.cursor.CursorStore;
+import com.bookcollector.cursor.repository.CursorStore;
 import com.bookcollector.task.entity.CollectTask;
+import com.bookcollector.task.entity.TaskLog;
 import com.bookcollector.task.entity.TaskRun;
+import com.bookcollector.task.repository.TaskRepository;
+import com.bookcollector.task.service.TaskService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;

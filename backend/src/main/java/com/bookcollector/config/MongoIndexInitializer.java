@@ -29,7 +29,8 @@ import java.util.List;
  *
  * <h3>顺带解决「集合不存在」的问题</h3>
  * 在一个不存在的集合上建索引，MongoDB 会<b>先把集合建出来</b>。
- * 所以这个初始化器跑完，8 个集合就一定都存在了 —— 不需要单独写建集合的逻辑。
+ * 所以这个初始化器跑完，9 个集合就一定都存在了 —— 不需要单独写建集合的逻辑。
+ * （`sys_user` 就是靠这一条建出来的：它没有别的建表入口。）
  *
  * <h3>⚠️ R22：{@code uk_bookId} 不是性能优化</h3>
  * 它是<b>幂等写入的正确性依赖</b>。采集是「按 bookId upsert」，如果这个唯一索引缺失，
@@ -65,6 +66,7 @@ public class MongoIndexInitializer implements ApplicationRunner {
         created += initCollectCursors();
         created += initTaxonomyConfig();
         created += initSettings();
+        created += initSysUser();
 
         log.info("========== 索引初始化完成：{} 个索引，耗时 {} ms ==========",
                 created, System.currentTimeMillis() - start);
@@ -286,6 +288,27 @@ public class MongoIndexInitializer implements ApplicationRunner {
                 .on("key", Sort.Direction.ASC)
                 .unique()
                 .named("uk_key"));
+
+        return 1;
+    }
+
+    /**
+     * sys_user —— 登录用户表（鉴权改造新增，2026-09-23）。
+     *
+     * <p>只建 1 个索引，但它是<b>唯一索引</b>，不是性能优化：
+     * {@code username} 必须全局唯一，否则 {@code SysUserRepository.findByUsername}
+     * 可能返回不确定的一条，登录就变成「看运气」了。
+     *
+     * <p>它同时是 {@code sys_user} 集合<b>唯一的建表入口</b> ——
+     * 见类注释「顺带解决集合不存在的问题」。
+     */
+    private int initSysUser() {
+        IndexOperations ops = mongoTemplate.indexOps("sys_user");
+
+        ops.ensureIndex(new Index()
+                .on("username", Sort.Direction.ASC)
+                .unique()
+                .named("uk_username"));
 
         return 1;
     }

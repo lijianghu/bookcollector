@@ -4,10 +4,12 @@ import com.bookcollector.audit.entity.ApiRequest;
 import com.bookcollector.common.BizException;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.common.enums.TaskStatus;
-import com.bookcollector.cursor.CursorStore;
+import com.bookcollector.cursor.repository.CursorStore;
 import com.bookcollector.task.entity.CollectTask;
 import com.bookcollector.task.entity.TaskLog;
 import com.bookcollector.task.entity.TaskRun;
+import com.bookcollector.task.service.TaskService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -144,10 +146,20 @@ class TaskControlIT {
         assertTrue(auditAfterWait - auditAtPause <= 1,
                 "★ 暂停后不应继续发请求：暂停时 " + auditAtPause + " 条 → 3.5 秒后 "
                         + auditAfterWait + " 条（最多允许 1 条在途）");
-        assertEquals(pagesAtPause, service.getRun(run.getId()).getPagesDone().intValue(),
-                "暂停期间 pagesDone 不应增长");
 
-        System.out.println("[S3-IT-2] 暂停 ✓  pagesDone=" + pagesAtPause
+        // ⚠️ 这里必须和上面一样留 1 的容差，不能写成严格相等。
+        // 暂停是「发信号」，不是「立刻掐断」—— 若 pause() 那一刻正好有 1 页在途，
+        // 它会把请求发完、页解析完、pagesDone 加 1 才停。这是**正确行为**，不是没停住。
+        // 更隐蔽的是：该页的 api_requests 记录在**发请求时**就已写入，
+        // 所以 audit 的增量可能是 0，而 pagesDone 仍然是 +1 ——
+        // 只查 audit 会漏判，只查 pagesDone 严格相等则会**偶发假红**（2026-09-23 实测踩到）。
+        // 真正的「停住」由上面那条 audit 断言保证：限速约 1 req/s，没停住 3.5 秒会多出 3~4 条。
+        int pagesAfterPause = service.getRun(run.getId()).getPagesDone();
+        assertTrue(pagesAfterPause - pagesAtPause <= 1,
+                "★ 暂停期间 pagesDone 不应继续增长：暂停时 " + pagesAtPause + " → 3.5 秒后 "
+                        + pagesAfterPause + "（最多允许 1 页在途落地）");
+
+        System.out.println("[S3-IT-2] 暂停 ✓  pagesDone=" + pagesAtPause + "→" + pagesAfterPause
                 + "，游标=" + cursorAtPause + "，api_requests " + auditAtPause + " → "
                 + auditAfterWait + "（未继续增长）");
 

@@ -1,10 +1,13 @@
 package com.bookcollector;
 
-import com.bookcollector.book.BookRepository;
 import com.bookcollector.book.entity.Book;
+import com.bookcollector.book.repository.BookRepository;
+import com.bookcollector.book.req.BookQuery;
+import com.bookcollector.common.PageResult;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.setting.entity.Setting;
 import com.bookcollector.taxonomy.entity.TaxonomyItem;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +56,16 @@ class S1DataLayerTest {
     /** 测试数据前缀，清理时按这个前缀删 */
     private static final String PREFIX = "__s1test__";
 
-    /** 8 个集合，一个都不能少 */
+    /**
+     * S1 验收要求的 8 个集合，一个都不能少。
+     *
+     * <p>⚠️ 这是 <b>S1 阶段</b>的集合清单，**不等于「当前全部集合」** ——
+     * 2026-09-23 的鉴权改造新增了 {@code sys_user}（第 9 个），
+     * 由 {@code MongoIndexInitializer.initSysUser()} 建出，**不在本用例的验收范围内**。
+     *
+     * <p>本用例只断言「这 8 个都存在」，**不**断言「恰好 8 个」——
+     * 这是刻意的：S1 的验收标准不该被后续功能改动，新增集合也不会让它变红。
+     */
     private static final List<String> EXPECTED_COLLECTIONS = Arrays.asList(
             "books",
             "api_requests",
@@ -79,11 +91,11 @@ class S1DataLayerTest {
     }
 
     // ==================================================================
-    // 验收标准 1：8 个集合都存在
+    // 验收标准 1：S1 要求的 8 个集合都存在
     // ==================================================================
 
     @Test
-    @DisplayName("1. db.getCollectionNames() 返回 8 个集合")
+    @DisplayName("1. db.getCollectionNames() 至少包含 S1 的 8 个集合")
     void allCollectionsExist() {
         Set<String> names = mongoTemplate.getCollectionNames();
         List<String> missing = new ArrayList<String>();
@@ -93,7 +105,7 @@ class S1DataLayerTest {
             }
         }
         assertTrue(missing.isEmpty(), "缺少集合：" + missing + "；实际存在的：" + names);
-        System.out.println("[S1-1] 8 个集合全部就位：" + EXPECTED_COLLECTIONS);
+        System.out.println("[S1-1] S1 的 8 个集合全部就位：" + EXPECTED_COLLECTIONS);
     }
 
     // ==================================================================
@@ -271,7 +283,7 @@ class S1DataLayerTest {
         assertEquals(afterFirst, bookRepository.count(), "重复批量 upsert 不应新增");
 
         // 分页查询
-        com.bookcollector.book.BookQuery q = new com.bookcollector.book.BookQuery();
+        com.bookcollector.book.req.BookQuery q = new com.bookcollector.book.req.BookQuery();
         q.setTargetType("category");
         q.setTargetId("300000");
         q.setPage(1);
@@ -282,7 +294,7 @@ class S1DataLayerTest {
 
         // size 超上限应被夹住
         q.setSize(100000);
-        assertEquals(com.bookcollector.book.BookQuery.MAX_SIZE, q.getSafeSize());
+        assertEquals(com.bookcollector.book.req.BookQuery.MAX_SIZE, q.getSafeSize());
         // page 非法值应回退到 1
         q.setPage(-5);
         assertEquals(1, q.getSafePage());

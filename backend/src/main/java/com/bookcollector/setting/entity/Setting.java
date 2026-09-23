@@ -20,8 +20,9 @@ import java.util.Date;
  *   <li>{@code requestDelayMs} —— 每页请求间隔（原 config.py 里是 1 秒）</li>
  * </ul>
  *
- * <p><b>注意</b>：写死登录用的账号密码<b>不</b>放这里，它们留在
- * {@code application.yml} 的 {@code bookcollector.auth.*}，避免明文落库。
+ * <p><b>注意</b>：登录用的账号密码<b>不</b>放这里 —— 它们落在 {@code sys_user} 集合，
+ * 密码存 <b>MD5 摘要</b>而非明文；初始管理员账号由 {@code SeedRunner} 首次启动时
+ * 从 {@code application.yml} 的 {@code bookcollector.auth.*} 播种进去。
  */
 @Data
 @Builder

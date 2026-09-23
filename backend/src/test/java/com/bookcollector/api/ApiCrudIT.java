@@ -7,6 +7,7 @@ import com.bookcollector.taxonomy.entity.TaxonomyItem;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,13 +68,41 @@ class ApiCrudIT {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Value("${bookcollector.auth.token}")
+    /** 初始管理员的登录名（播种配置，不是登录校验的来源） */
+    @Value("${bookcollector.auth.initial-username}")
+    private String username;
+
+    /** 初始管理员的明文密码 */
+    @Value("${bookcollector.auth.initial-password}")
+    private String password;
+
+    /**
+     * 真实登录拿到的 token。
+     *
+     * <p>改造前这里是 {@code @Value("${bookcollector.auth.token}")} —— token 是
+     * 配置里写死的常量。现在 token 由 Sa-Token 签发、存在 Redis 里，
+     * 配置里没有它的值，只能在 {@link #loginOnce()} 里登录获取。
+     */
     private String token;
 
     private final ObjectMapper json = new ObjectMapper();
 
     /** 测试过程中建出来的任务 ID。用于兜底清理日志 —— S3 的孤儿日志就是这么攒出来的 */
     private final List<String> createdTaskIds = new ArrayList<String>();
+
+    /** 每个测试前登录一次，拿到可用 token */
+    @BeforeEach
+    void loginOnce() throws Exception {
+        JsonNode body = readJson(mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
+                .andReturn());
+        assertEquals(200, body.get("code").asInt(),
+                "登录失败，后续用例没有意义（code=" + body.get("code").asInt()
+                        + " message=" + body.get("message").asText() + "）");
+        token = body.get("data").get("token").asText();
+        assertFalse(token.trim().isEmpty(), "登录必须返回非空 token");
+    }
 
     @AfterEach
     void cleanup() {

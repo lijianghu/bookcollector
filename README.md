@@ -8,7 +8,7 @@
 
 > **第一期范围**
 > 做：分类 / 榜单管理 → 启动采集任务 → 看进度 → 浏览采集到的图书。
-> 不做：SSE 实时推送（手动刷新）、定时采集、权限体系（写死登录）、ETL 迁移、
+> 不做：SSE 实时推送（手动刷新）、定时采集、权限体系（`roles` 存在但不参与鉴权）、ETL 迁移、
 > 数据导出、模糊搜索、Docker 部署。
 
 ---
@@ -75,7 +75,10 @@
 
 ### 登录
 
-- 单用户写死校验，预留登录入口，服务端不维护会话
+- 账号存在 MongoDB 的 `sys_user` 集合（密码存 **MD5 摘要**，不存明文），
+  由 **Sa-Token** 签发 token 并维护服务端会话（Redis）—— 所以**登出会真的让 token 失效**
+- 首次启动播种一个初始管理员（`bookcollector.auth.initial-*`）；之后改密码改库即生效，不用重启
+- 服务端**不做权限体系**：`roles` 字段存在，但不参与任何鉴权判断
 - token 存 `localStorage`，axios 拦截器统一处理失效跳转
 
 ---
@@ -142,15 +145,15 @@
 │      │                                                     │
 │  Entity          @Document 持久化映射                       │
 │                                                            │
-│  横切：TokenInterceptor（鉴权）/ TraceIdFilter（链路 id）      │
+│  横切：AuthInterceptor（鉴权）/ TraceIdFilter（链路 id）       │
 │        GlobalExceptionHandler（统一异常 → 业务码）            │
 └──────────┬───────────────────────────────┬─────────────────┘
            │                               │
     ┌──────▼──────┐                 ┌──────▼──────────────────┐
     │  MongoDB    │                 │  采集引擎 collector/      │
-    │  8 个集合    │◀────────────────│  CollectLoop + 重试/限速  │
+    │  9 个集合    │◀────────────────│  CollectLoop + 重试/限速  │
     └─────────────┘                 └──────┬──────────────────┘
-                                           │ HTTP（伪装 Header）
+                                           │ HTTP（自定义 Header）
                                     ┌──────▼──────────┐
                                     │  微信读书接口     │
                                     └─────────────────┘
@@ -213,8 +216,9 @@
 | `collect_cursors` | 采集游标 | 唯一索引 `(targetType, targetId)` |
 | `api_requests` | 上游请求审计（每页一条） | 索引 `createdAt`、`runId` |
 | `settings` | 预留 | 唯一索引 `key` |
+| `sys_user` | 登录用户（密码存 MD5 摘要） | 唯一索引 `username` |
 
-索引在应用启动时由 `MongoIndexInitializer` 显式创建（共 17 个），
+索引在应用启动时由 `MongoIndexInitializer` 显式创建（共 18 个），
 并带「字段漂移自愈」：索引字段路径改过时先 `drop` 再建。
 
 > ⚠️ `ensureIndex` 的语义是「按名字 upsert」—— 同名索引已存在时**什么都不做**，不比较字段。
@@ -235,7 +239,8 @@ bookcollector-admin/
 │       │   ├── common/           ResultBean / PageResult / BizException /
 │       │   │                     GlobalExceptionHandler / TraceIdFilter
 │       │   │   └── enums/        TargetType / TaskStatus
-│       │   ├── auth/             写死登录：AuthProperties / TokenInterceptor / AuthController
+│       │   ├── auth/             登录鉴权：AuthStpUtil / AuthInterceptor / AuthController
+│       │   │                     ExtractLoginUser / SysUser / LoginUser
 │       │   ├── collector/        采集引擎：CollectLoop / WereadClient / BookParser /
 │       │   │                     BookWriter / SimpleRateLimiter / ProgressReporter ...
 │       │   ├── task/             任务编排：TaskService / TaskRunner / TaskRegistry /
@@ -287,7 +292,7 @@ bookcollector-admin/
 ### 1. 准备 MongoDB
 
 确保 MongoDB 已在本地 `27017` 运行。**不需要手工建库建表** ——
-首次启动时应用会自动建索引（17 个）并 seed 字典（21 个分类 + 7 个榜单）。
+首次启动时应用会自动建索引（18 个）并 seed 字典（21 个分类 + 7 个榜单 + 1 个初始管理员）。
 
 ### 2. 改配置
 
@@ -297,14 +302,16 @@ bookcollector-admin/
 |---|---|---|
 | `spring.data.mongodb.uri` | `mongodb://localhost:27017/bookcollector` | 数据库地址 |
 | `server.port` | `8080` | 后端端口（改了要同步改前端 `vite.config.ts` 的代理） |
-| `bookcollector.auth.username` | `admin` | **⚠️ 请改成自己的** |
-| `bookcollector.auth.password` | `admin123` | **⚠️ 请改成自己的** |
-| `bookcollector.auth.token` | `local-dev-token-please-change` | **⚠️ 请改成随机串** |
+| `bookcollector.auth.initial-username` | `admin` | 初始管理员登录名（仅首次启动、库为空时播种） |
+| `bookcollector.auth.initial-password` | `admin123` | **⚠️ 请改成自己的**（落库前做 MD5，库里不存明文） |
+| `bookcollector.auth.initial-nickname` | `管理员` | 前端顶栏展示名 |
+| `sa-token.timeout` | `2592000` | 登录有效期（秒），默认 30 天 |
 | `bookcollector.weread.rate-limit-per-second` | `1.0` | 采集限速（页/秒），调高有被上游限流的风险 |
 | `bookcollector.weread.max-retry` | `3` | 单页失败重试次数 |
 
-> `bookcollector.auth` 是**写死的单用户校验**，第一期不做权限体系，
-> 服务端不维护会话，token 就是一个固定字符串。
+> `bookcollector.auth` 只是**首次启动时播种初始管理员**的参数，
+> **不是登录校验的来源** —— 登录校验读的是 `sys_user` 集合。
+> 库里已有同名用户时这段配置**完全不生效**（所以改密码改库即可，不用重启）。
 > 默认值只是为了开箱能跑，**公开部署前务必修改**。
 
 ### 3. 启动后端
@@ -319,7 +326,8 @@ mvn spring-boot:run
 - 服务地址：<http://127.0.0.1:8080>
 - 健康检查：<http://127.0.0.1:8080/api/ping> → `{"code":200,...,"data":{"message":"pong"}}`
 - 接口文档：<http://127.0.0.1:8080/swagger-ui.html>
-  （先点右上角 **Authorize**，粘上 `bookcollector.auth.token` 的值）
+  （先调 `POST /api/auth/login` 拿 `data.token`，再点右上角 **Authorize** ——
+  只粘 token 本身，Swagger UI 会自动补 `Bearer ` 前缀）
 
 ### 4. 启动前端
 
@@ -379,9 +387,11 @@ npm run dev
 
 **鉴权失败返的是 HTTP 200 + `code=4100`，不是 401** —— 这一条反直觉，但很重要：
 
-- 后端用 `TokenInterceptor`（`HandlerInterceptor`，不是 Filter）拦 `/api/**`，
+- 后端用 `AuthInterceptor`（`HandlerInterceptor`，不是 Filter）拦 `/api/**`，
   放行 `/api/auth/login` 与 `/api/ping`；校验失败时**自己往 response 写 JSON**，
   HTTP 状态码设 200、body 里 `code=4100`
+- token **只从请求头读**，格式必须是 `Authorization: Bearer <token>`
+  （改造前还支持 `X-Token: xxx` 与 `?token=xxx`，现在都不支持了）
   （`preHandle` 返回 `false` 后 `GlobalExceptionHandler` 不会介入，所以必须自己写）
 - 用 Interceptor 而不是 Filter：Filter 只能按 `urlPatterns` 前缀匹配，
   而 `/api/auth/login`、`/api/ping` 与要拦的其余 `/api/**` 混在同一前缀下，

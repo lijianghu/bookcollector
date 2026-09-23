@@ -1,14 +1,17 @@
 package com.bookcollector.collector;
 
 import com.bookcollector.audit.entity.ApiRequest;
-import com.bookcollector.book.BookRepository;
 import com.bookcollector.book.entity.Book;
+import com.bookcollector.book.repository.BookRepository;
+import com.bookcollector.collector.dto.CollectCommand;
+import com.bookcollector.collector.dto.CollectResult;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.common.enums.TaskStatus;
-import com.bookcollector.cursor.CursorStore;
 import com.bookcollector.cursor.entity.CollectCursor;
+import com.bookcollector.cursor.repository.CursorStore;
 import com.bookcollector.task.entity.TaskLog;
 import com.bookcollector.task.entity.TaskRun;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

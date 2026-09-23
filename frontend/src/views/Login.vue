@@ -9,9 +9,16 @@ import { resetSessionInvalidFlag } from '@/api/request'
  * 登录页。
  *
  * <h3>为什么预填了账号密码</h3>
- * 第一期是本地单机、写死凭据（`bookcollector.auth.*`）。预填省掉每次手输，
- * 但**不隐藏**这是写死的 —— 页面上直接写出来，免得以后误以为有真实鉴权。
- * 真要改凭据就改 `backend/src/main/resources/application.yml`。
+ * 初始管理员账号由后端**首次启动时播种**到 `sys_user` 表（账号来源
+ * `bookcollector.auth.*`，密码以 **MD5 摘要**落库，库里没有明文）。预填省掉每次手输，
+ * 但**不隐藏**这是初始凭据 —— 页面上直接写出来，免得以后误以为系统里没有真实鉴权。
+ * 要改初始账号就改 `backend/src/main/resources/application.yml`（**只在表里查不到该用户时生效**），
+ * 或者直接改库里的 `sys_user` 文档。
+ *
+ * <h3>这里的鉴权是真的</h3>
+ * 登录成功拿到的是 **Sa-Token 会话凭证**（会话数据存 Redis），之后每个请求都会校验；
+ * 登出会**真的销毁服务端会话**。所以清 localStorage / 换个浏览器**并不能**绕过登录，
+ * 只能重新登录。
  *
  * <h3>登录成功后的去向</h3>
  * 优先回 `?redirect=` 指的地方（路由守卫在踢人时写进去的），
@@ -132,8 +139,9 @@ onMounted(() => {
 
       <el-alert type="info" :closable="false" class="tip">
         <template #title>
-          第一期不做权限体系：账号密码写死在
-          <code>application.yml</code> 的 <code>bookcollector.auth</code> 下，已预填。
+          第一期不做权限体系（<code>roles</code> 字段存在但不参与判断）：初始账号由后端首次启动时
+          播种到 <code>sys_user</code> 表，来源是 <code>application.yml</code> 的
+          <code>bookcollector.auth</code>，已预填。
         </template>
       </el-alert>
     </el-card>

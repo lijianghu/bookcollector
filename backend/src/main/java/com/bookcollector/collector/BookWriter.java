@@ -1,7 +1,7 @@
 package com.bookcollector.collector;
 
 import com.bookcollector.book.entity.Book;
-import com.bookcollector.book.BookRepository;
+import com.bookcollector.book.repository.BookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * 34+ 个端点里有 31 个需要 token。声明之后 Swagger UI 上会多一个 <b>Authorize</b>
  * 按钮，粘一次 token 就能直接调所有接口 —— 否则手工调试每个端点都要复制粘贴 header。
  * 注意这个声明<b>只是文档层面的提示</b>，真正的校验在
- * {@link com.bookcollector.auth.TokenInterceptor}，两处不共享代码（也不该共享：
+ * {@link com.bookcollector.auth.interceptor.AuthInterceptor}，两处不共享代码（也不该共享：
  * 一个是给人和工具看的契约，一个是运行时逻辑）。
  */
 @Configuration
@@ -46,7 +46,9 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("token")
-                                .description("固定 token，取值见 application.yml 的 bookcollector.auth.token")))
+                                .description("登录接口（POST /api/auth/login）返回的 data.token。"
+                                        + "**只粘 token 本身** —— Swagger UI 会按 bearer 方案自动补上 "
+                                        + "「Bearer 」前缀（后端要求该前缀，见 sa-token.token-prefix）")))
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
     }
 }

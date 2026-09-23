@@ -28,6 +28,29 @@
     <springdoc.version>1.6.15</springdoc.version>
 
     <!--
+      Sa-Token：登录认证框架。
+      1.45.0 仍然支持 Spring Boot 2（它的 starter import 了 sa-token-spring-boot2-dependencies）。
+
+      ⚠️ 那个 BOM 里钉的是 **Spring Boot 2.7.18 / Spring 5.3.39**，而本项目是 2.3.12 / 5.2.15
+      —— 也就是说 Sa-Token 的 jar 是按 Spring 5.3.39 编译的。升级它之前先跑一次测试。
+      好消息：dependencyManagement 写在 Sa-Token 自己的 POM 里，**不会**覆盖本项目的版本管理。
+    -->
+    <sa-token.version>1.45.0</sa-token.version>
+
+    <!--
+      Hutool：spring-boot-dependencies 不管理它，必须自己写版本号。
+      用途见下方「工具」段的依赖声明。
+    -->
+    <hutool.version>5.8.4</hutool.version>
+
+    <!--
+      ⚠️ 这个属性名与 spring-boot-dependencies 里的同名属性**重合**
+      （BOM 2.3.12 默认值是 3.10）。写在这里会覆盖 BOM 的默认值，
+      使全项目（含 BOM 管理的声明与传递依赖）统一到 3.12.0。这是有意为之。
+    -->
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+
+    <!--
       若 MongoDB 驱动 4.0.6 连不上服务端 7.0.30，把下面这行的注释去掉。
       （官方兼容表：4.10+ 才是「✓ 完全兼容」；4.0.6 是「⊛ 部分兼容 = 能用」）
       <mongodb.version>4.11.1</mongodb.version>
@@ -69,6 +92,27 @@
       <artifactId>httpclient</artifactId>
     </dependency>
 
+    <!-- ===== 认证 ===== -->
+
+    <!-- Sa-Token 登录认证（Spring Boot 2 集成包，含 WebMVC 拦截与注解支持） -->
+    <dependency>
+      <groupId>cn.dev33</groupId>
+      <artifactId>sa-token-spring-boot-starter</artifactId>
+      <version>${sa-token.version}</version>
+    </dependency>
+
+    <!--
+      Sa-Token 的 Redis DAO（Jackson 序列化）。
+      ⚠️ 这个 artifact 在 1.44.0 改过名：**旧名是 sa-token-dao-redis-jackson**。
+      引入后 Token / 会话落 Redis（默认是内存），JVM 重启不掉登录态。
+      依赖 spring-boot-starter-data-redis（上方已声明）。
+    -->
+    <dependency>
+      <groupId>cn.dev33</groupId>
+      <artifactId>sa-token-redis-jackson</artifactId>
+      <version>${sa-token.version}</version>
+    </dependency>
+
     <!-- ===== JSON ===== -->
     <dependency>
       <groupId>com.alibaba.fastjson2</groupId>
@@ -93,6 +137,33 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
+    </dependency>
+
+    <!--
+      Hutool 工具库（官方聚合包，一个坐标包含全部模块）。
+
+      为什么引：全局分页工具类 PageQueryUtil 的实现用到
+      cn.hutool.core.bean.BeanUtil 与 cn.hutool.core.collection.CollUtil，
+      详见 backend/AGENTS.md 的「分页查询规范」一节。
+    -->
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>${hutool.version}</version>
+    </dependency>
+
+    <!--
+      Apache Commons Lang3。
+
+      为什么引：PageQueryUtil 用 StringUtils.isBlank 做排序字段判空。
+
+      ⚠️ 这里**刻意不写 <version>** —— 版本由上方 properties 里的
+      commons-lang3.version 统一控制（覆盖 BOM 默认的 3.10）。
+      不要在这个 dependency 上单独写版本号，否则会与属性形成两个来源。
+    -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
 
     <!-- ===== 测试 ===== -->

@@ -1,8 +1,11 @@
 package com.bookcollector.book;
 
 import com.bookcollector.book.entity.Book;
+import com.bookcollector.book.repository.BookRepository;
+import com.bookcollector.book.req.BookQuery;
 import com.bookcollector.common.PageResult;
-import com.bookcollector.stats.StatsService;
+import com.bookcollector.stats.service.StatsService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

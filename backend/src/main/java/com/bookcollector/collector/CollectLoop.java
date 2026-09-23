@@ -1,11 +1,16 @@
 package com.bookcollector.collector;
 
-import com.bookcollector.audit.ApiRequestRepository;
+import com.bookcollector.audit.repository.ApiRequestRepository;
 import com.bookcollector.book.entity.Book;
+import com.bookcollector.collector.dto.CollectCommand;
+import com.bookcollector.collector.dto.CollectResult;
+import com.bookcollector.collector.dto.WereadPage;
+import com.bookcollector.collector.dto.WereadRawResponse;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.config.WereadProperties;
-import com.bookcollector.cursor.CursorStore;
 import com.bookcollector.cursor.entity.CollectCursor;
+import com.bookcollector.cursor.repository.CursorStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

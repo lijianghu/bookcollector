@@ -12,7 +12,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 /**
- * 给每个请求注入伪装 Header。
+ * 给每个请求注入自定义 Header。
  *
  * <p>为什么用拦截器而不是在每次调用时手动 set header：
  * RestTemplate 的 message converter 会根据 body 类型自行决定 {@code Accept}，

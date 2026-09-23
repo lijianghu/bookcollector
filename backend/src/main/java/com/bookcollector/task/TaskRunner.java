@@ -1,15 +1,18 @@
 package com.bookcollector.task;
 
-import com.bookcollector.collector.CollectCommand;
 import com.bookcollector.collector.CollectLoop;
-import com.bookcollector.collector.CollectResult;
 import com.bookcollector.collector.ProgressReporter;
+import com.bookcollector.collector.dto.CollectCommand;
+import com.bookcollector.collector.dto.CollectResult;
 import com.bookcollector.common.TraceIdFilter;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.common.enums.TaskStatus;
 import com.bookcollector.config.AsyncConfig;
 import com.bookcollector.task.entity.CollectTask;
 import com.bookcollector.task.entity.TaskRun;
+import com.bookcollector.task.repository.TaskRepository;
+import com.bookcollector.task.service.TaskService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

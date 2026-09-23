@@ -21,9 +21,11 @@ import type { LoginRequest } from '@/types'
  * 代价是「改了一边要记得改另一边」—— 所以所有写操作都收敛到 `login()` / `logout()`
  * 两个 action 里，不要在其他地方直接 `localStorage.setItem`。
  *
- * <h3>为什么没有 refreshToken / 过期时间</h3>
- * 后端是写死的固定 token，没有过期概念（第一期本地单用户，刻意不做权限体系）。
- * 「登录过期」只会在用户手动改坏 localStorage 时出现。
+ * <h3>为什么没有 refreshToken</h3>
+ * 后端用 Sa-Token 签发 token 并把会话存在 Redis 里，有效期 30 天
+ * （`application.yml` 的 `sa-token.timeout`），期间不需要刷新 ——
+ * 本地单用户工具里，让 token 自己过期比维护一套刷新流程省事得多。
+ * 过期 / 被登出后后端返回 `code=4100`，由 axios 拦截器统一送回登录页。
  */
 export const useUserStore = defineStore('user', () => {
   // ---------------- state ----------------
@@ -70,9 +72,11 @@ export const useUserStore = defineStore('user', () => {
   /**
    * 登出。
    *
-   * 后端没有会话可清，`logout()` 只是礼貌性地告诉它一声；
-   * **即使这个请求失败也必须把本地状态清掉** —— 否则用户会卡在
-   * 「点了登出但还是登录着」的状态里。
+   * 后端**真的**会删掉 Redis 里的会话（改造前是无状态的，清了也没用），
+   * 所以这个请求有实际作用，不能省。
+   * 但**即使它失败也必须把本地状态清掉** —— 否则用户会卡在
+   * 「点了登出但还是登录着」的状态里（那种情况下后端会话还在，
+   * 只是本地已经登不回去，重新登录即可）。
    */
   async function logout(): Promise<void> {
     try {

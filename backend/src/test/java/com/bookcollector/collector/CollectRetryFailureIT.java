@@ -4,9 +4,9 @@ import com.bookcollector.audit.entity.ApiRequest;
 import com.bookcollector.common.enums.TargetType;
 import com.bookcollector.common.enums.TaskStatus;
 import com.bookcollector.config.WereadProperties;
-import com.bookcollector.cursor.CursorStore;
+import com.bookcollector.cursor.repository.CursorStore;
 import com.bookcollector.task.TaskRegistry;
-import com.bookcollector.task.TaskService;
+import com.bookcollector.task.service.TaskService;
 import com.bookcollector.task.entity.CollectTask;
 import com.bookcollector.task.entity.TaskLog;
 import com.bookcollector.task.entity.TaskRun;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * S7 端到端验收 —— <b>对端异常 / 断网时，任务必须失败得「说得清」</b>。
  *
  * <p>这是 S2 留下的那条验收（「故意断网 → 重试 3 次后任务 FAILED，日志有清晰原因」），
- * S2 只做到「{@code errorMsg} 装进 {@link CollectResult}」，
+ * S2 只做到「{@code errorMsg} 装进 {@link com.bookcollector.collector.dto.CollectResult}」，
  * 「任务真的变 FAILED」要等 S3 的 {@code TaskRunner} 才成立 —— 所以顺延到 S7 一次验完。
  *
  * <h3>怎么验（不 mock 采集逻辑，只换对端）</h3>
@@ -409,10 +409,22 @@ class CollectRetryFailureIT {
     }
 
     /**
-     * 清掉本目标的 任务 / 运行 / 日志。
+     * 清掉本目标的 任务 / 运行 / 日志 / 审计。
      *
      * <p>和 {@code TaskControlIT} 一样，<b>日志必须一起删</b>：
      * 只删 task 和 run 会留下 runId 指向不存在 run 的孤儿日志。
+     *
+     * <p>审计（{@code api_requests}）也必须一起删 —— 只清 task/run/log 会留下
+     * <b>孤儿审计</b>：它们的 {@code targetId} 指向一个字典里根本不存在的目标
+     * （{@code it-retry-target}），在「请求审计」页就是一片红底行，
+     * 点进去也不知道是哪个目标的请求。2026-09-23 实测攒了 <b>27 条</b>
+     * （11 超时 + 8×404 + 8×500），全是打本地假服务留下的。
+     *
+     * <p><b>为什么这里可以按 targetId 整片删</b>：{@code it-retry-target} 是
+     * <b>测试专用</b>目标，永远不可能有用户真采的数据落在它名下。
+     * 反过来说，{@code TaskControlIT} 用的是真目标（{@code 300000} 文学），
+     * 所以它<b>不能</b>照这个写法删审计 —— 那会把用户真采的历史一起抹掉。
+     * 它真打真接口留下的审计行属于<b>合法历史</b>，留在库里是对的。
      */
     private void clearTarget() {
         List<CollectTask> tasks = mongoTemplate.find(
@@ -427,5 +439,8 @@ class CollectRetryFailureIT {
         mongoTemplate.remove(
                 Query.query(Criteria.where("targetType").is(TargetType.CATEGORY.name())
                         .and("targetId").is(TARGET_ID)), TaskRun.class);
+        mongoTemplate.remove(
+                Query.query(Criteria.where("targetType").is(TargetType.CATEGORY.name())
+                        .and("targetId").is(TARGET_ID)), ApiRequest.class);
     }
 }

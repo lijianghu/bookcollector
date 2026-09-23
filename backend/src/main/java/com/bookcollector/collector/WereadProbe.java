@@ -1,9 +1,11 @@
 package com.bookcollector.collector;
 
+import com.bookcollector.collector.dto.WereadRawResponse;
+import com.bookcollector.common.enums.TargetType;
+
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.bookcollector.common.enums.TargetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

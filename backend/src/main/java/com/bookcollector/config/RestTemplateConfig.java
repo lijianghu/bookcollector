@@ -77,7 +77,7 @@ public class RestTemplateConfig {
         // 不要用 SimpleClientHttpRequestFactory —— 那个是 JDK HttpURLConnection，Header 行为不可控
 
         RestTemplate restTemplate = new RestTemplate(factory);
-        // 用拦截器统一注入伪装 Header，避免被 RestTemplate 的默认 Accept 覆盖
+        // 用拦截器统一注入自定义 Header，避免被 RestTemplate 的默认 Accept 覆盖
         restTemplate.setInterceptors(Collections.singletonList(new WereadHeaderInterceptor(props)));
         // ★ 关键：不让 RestTemplate 把 4xx/5xx 变成异常，见 RawResponseErrorHandler
         restTemplate.setErrorHandler(new RawResponseErrorHandler());

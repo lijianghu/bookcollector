@@ -1,5 +1,6 @@
 package com.bookcollector.common;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -37,6 +38,33 @@ public class GlobalExceptionHandler {
         log.warn("[业务异常] {} {} -> code={}, msg={}",
                 request.getMethod(), request.getRequestURI(), e.getCode(), e.getMessage());
         return ResultBean.err(e.getCode(), e.getMessage());
+    }
+
+    /**
+     * Sa-Token 未登录 / token 无效 / token 过期 → 4100。
+     *
+     * <h3>🔴 为什么这个分支存在，而 {@code AuthInterceptor} 又要自己写一遍响应</h3>
+     * 两者覆盖的是<b>不同的调用点</b>，不是重复：
+     * <ul>
+     *   <li>{@code AuthInterceptor.preHandle} 是主路径（每一次未带 token 的
+     *       {@code /api/**} 请求都走它）。那里<b>刻意不抛异常</b>，而是自己写响应 ——
+     *       理由见该类的注释（热路径不依赖异常解析链）。</li>
+     *   <li>这个分支兜的是「<b>服务层直接调</b> {@code AuthStpUtil.checkLogin()}」
+     *       以及 {@code ExtractLoginUserHandlerResolver} 解析时抛出的情况 ——
+     *       那些调用发生在 {@code preHandle} 之后，拦截器管不到。</li>
+     * </ul>
+     * 少了它，服务层里的一次 {@code checkLogin()} 会掉进下面
+     * {@code handleAny} 的兜底分支，返回 {@code code=500} 而不是 {@code 4100}，
+     * 前端就不会跳登录页，而是弹一句莫名其妙的 500。
+     *
+     * <p>对外文案统一成「身份已失效，请重新登录！」，<b>不区分</b>未登录 / 无效 / 过期 ——
+     * 对使用者来说动作只有一个（重新登录），区分细节只会泄漏会话状态。
+     * 细节（{@code e.getMessage()}）留在日志里。
+     */
+    @ExceptionHandler(NotLoginException.class)
+    public ResultBean<Void> handleNotLogin(NotLoginException e, HttpServletRequest request) {
+        log.warn("[未登录] {} {} -> {}", request.getMethod(), request.getRequestURI(), e.getMessage());
+        return ResultBean.err(ResultBean.code_session_invalid, "身份已失效，请重新登录！");
     }
 
     /** MongoDB 唯一索引冲突 → 405 */
